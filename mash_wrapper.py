@@ -65,7 +65,8 @@ def sketch_reads(read, inputfile, output_tag, threads):
 def masher(ref_sketch, read_sketch, output_tag, threads):
 	out_folder = os.path.join(os.path.dirname(os.path.abspath(ref_sketch)))
 	out_file = os.path.join(out_folder , output_tag)
-	mash_command = "mash dist -p "+ threads+ " " + ref_sketch +" "+ read_sketch +" > " + os.path.basename(read_sketch).split(".")[0]+"_distances.txt"
+	print ref_sketch
+	mash_command = "mash dist -p "+ threads+ " " + ref_sketch +" "+ read_sketch +" > " + out_file + os.path.basename(read_sketch).split(".")[0]+"_distances.txt"
 	print
 	print mash_command
 	print	
