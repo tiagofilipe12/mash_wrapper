@@ -2,7 +2,7 @@
 
 This script runs MASH in plasmid databases.
 
-Note: each header in fasta is considered a reference
+Note: each header in fasta is considered a reference ('-i' option of mash).
 
 ###Options:
 
