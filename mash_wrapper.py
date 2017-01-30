@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-## Last update: 27/1/2017
+## Last update: 30/1/2017
 ## Author: T.F. Jesus
 ## This script runs MASH in plasmid databases.
 ## Note: each header in fasta is considered a reference
@@ -10,7 +10,7 @@ import os
 import operator
 from subprocess import Popen, PIPE
 import plotly
-import plotly.plotly as py
+#import plotly.plotly as py
 import plotly.graph_objs as go
 
 
@@ -154,7 +154,8 @@ def main():
 		list_mash_files.append(mash_output)
 	mashdist2graph(list_mash_files, args.output_tag)
 
-	## remove master_fasta... still not implemented
+	## remove master_fasta
+	os.remove(main_fasta)
 
 if __name__ == "__main__":
 	main()
