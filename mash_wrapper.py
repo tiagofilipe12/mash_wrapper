@@ -10,7 +10,6 @@ import os
 import operator
 from subprocess import Popen, PIPE
 import plotly
-#import plotly.plotly as py
 import plotly.graph_objs as go
 
 
