@@ -13,3 +13,6 @@ Note: each header in fasta is considered a reference ('-i' option of mash).
 **'-o'**,**'--output'**, dest='output_tag', required=True, help='Provide an output tag'
 
 **'-t'**, **'--threads'**, dest='threads', help='Provide the number of threads to be used'
+
+**'-k'**,**'--kmers'**, dest='kmer_size', help='Provide the number of k-mers to be provided to mash sketch. Default: 21'
+

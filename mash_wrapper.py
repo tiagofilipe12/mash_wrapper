@@ -92,7 +92,6 @@ def masher(ref_sketch, read_sketch, output_tag, threads):
 ## Reads the output of mash dist and performes a barplot for each reads
 def mashdist2graph(list_mash_files, tag):
 	dist_dict = {}
-	#list_plasmids = []
 	trace_list=[]
 	## First reads mash output files and creates a sorted dictionary for each file by mash distance (from highest to lowest values)
 	for in_file in list_mash_files:
@@ -105,7 +104,6 @@ def mashdist2graph(list_mash_files, tag):
 			p_value = tab_split[3]			
 			if float(p_value) < 0.05:		## filters distances with no significant p-values
 				dist_dict[reference_id] = mash_distance
-		#list_plasmids.append(query_id) ##creates a list to be given as series name
 		## Orders the dictionary from the minor distances to the major
 		sorted_dist_dict = sorted(dist_dict.items(), key=operator.itemgetter(1))
 		## creates two lists to be given as the x and y for the bar plot
