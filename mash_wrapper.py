@@ -112,7 +112,7 @@ def mashdist2graph(list_mash_files, tag):
 		for k,v in sorted_dist_dict:
 			if k not in global_reference:
 				global_reference.append(k)
-			global_values.append(float(v))
+			global_values.append(1-float(v))		#reverts mash distances to mash "similarities", i.e., inverts the scale.
 		trace = go.Bar(x=global_reference, y=global_values, name=query_id)
 		trace_list.append(trace)
 
@@ -124,10 +124,11 @@ def mashdist2graph(list_mash_files, tag):
 def main():
 	parser = argparse.ArgumentParser(description="Retrieves all gb files given an input fasta")
 	parser.add_argument('-i','--input_references', dest='inputfile', nargs='+', required=True, help='Provide the input fasta files to parse.')
-	parser.add_argument('-r','--reads', dest='reads', nargs='+', required=True, help='Provide the input read files to parse.')	
+	parser.add_argument('-r','--reads', dest='reads', nargs='+', required=True, help='Provide the input read files to parse.')	## should implement a parser for a given directory with reads or a list file with all full path to each read library
 	parser.add_argument('-o','--output', dest='output_tag', required=True, help='Provide an output tag')
 	parser.add_argument('-t', '--threads', dest='threads', help='Provide the number of threads to be used. Default: 1')
 	parser.add_argument('-k', '--kmers', dest='kmer_size', help='Provide the number of k-mers to be provided to mash sketch. Default: 21')
+	parser.add_argument('-no_rm', '--no-remove', dest='no_remove', action='store_true', help='Specify if you do not want to remove the output concatenated fasta.')
 	args = parser.parse_args()
 	if args.threads is None:
 		threads = "1"
@@ -152,7 +153,8 @@ def main():
 	mashdist2graph(list_mash_files, args.output_tag)
 
 	## remove master_fasta
-	os.remove(main_fasta)
+	if not args.no_remove:
+		os.remove(main_fasta)
 
 if __name__ == "__main__":
 	main()
