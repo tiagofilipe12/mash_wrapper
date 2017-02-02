@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-## Last update: 30/1/2017
+## Last update: 1/2/2017
 ## Author: T.F. Jesus
 ## This script runs MASH in plasmid databases.
 ## Note: each header in fasta is considered a reference
@@ -112,7 +112,7 @@ def mashdist2graph(list_mash_files, tag):
 		for k,v in sorted_dist_dict:
 			if k not in global_reference:
 				global_reference.append(k)
-			global_values.append(1-float(v))		#reverts mash distances to mash "similarities", i.e., inverts the scale.
+			global_values.append(1-float(v))		#converts mash distances to mash "similarities", i.e., inverts the scale.
 		trace = go.Bar(x=global_reference, y=global_values, name=query_id)
 		trace_list.append(trace)
 
