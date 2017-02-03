@@ -122,7 +122,7 @@ def mashdist2graph(list_mash_files, tag):
 	plot_url = plotly.offline.plot(fig, filename= tag + '.html',auto_open=False)	
 
 def main():
-	parser = argparse.ArgumentParser(description="Retrieves all gb files given an input fasta")
+	parser = argparse.ArgumentParser(description="Runs MASH using a database against sets of reads")
 	parser.add_argument('-i','--input_references', dest='inputfile', nargs='+', required=True, help='Provide the input fasta files to parse.')
 	parser.add_argument('-r','--reads', dest='reads', nargs='+', required=True, help='Provide the input read files to parse.')	## should implement a parser for a given directory with reads or a list file with all full path to each read library
 	parser.add_argument('-o','--output', dest='output_tag', required=True, help='Provide an output tag')
