@@ -8,7 +8,10 @@ Note: each header in fasta is considered a reference ('-i' option of mash).
 
 **'-i'**,**'--input_references'**, dest='inputfile', nargs='+', required=True, help='Provide the input fasta files to parse.'
 
-**'-r'**,**'--reads'**, dest='reads', nargs='+', required=True, help='Provide the input read files to parse.'	
+**'-r'**,**'--reads'**, dest='reads', nargs='+', required=True, help='Provide the input read files to parse. Usually fastq files. This option is mutually with "-f".'
+
+**'-f'**,**'--sequences'**, dest='sequences', nargs='+', help='Provide the input sequence files to parse. Usually fasta files. This option is mutually exclusive with "-r".')	## should implement a parser for a given directory with reads or a list file with all full path to each read library
+	
 
 **'-o'**,**'--output'**, dest='output_tag', required=True, help='Provide an output tag'
 
