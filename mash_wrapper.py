@@ -48,11 +48,20 @@ def sketch_references(inputfile, output_tag, threads,kmer_size):
 	out_folder = os.path.join(os.path.dirname(os.path.abspath(inputfile)), output_tag)
 	out_file = os.path.join(out_folder, output_tag +"_reference")
 	folderexist(out_folder)
-	sketcher_command = "mash sketch -o " + out_file +" -k " + kmer_size+ " -p "+ threads + " -i " + inputfile
+	sketcher_command = ["mash",
+						"sketch",
+						"-o",
+						out_file,
+						"-k",
+						kmer_size,
+						"-p",
+						threads,
+						"-i",
+						inputfile]
 	print
-	print sketcher_command
+	print "Running mash sketch for references..."
 	print
-	p=Popen(sketcher_command, stdout = PIPE, stderr = PIPE, shell=True)
+	p=Popen(sketcher_command, stdout = PIPE, stderr = PIPE)
 	p.wait()
 	stdout,stderr= p.communicate()
 	print stderr
@@ -64,22 +73,59 @@ def sketch_reads(read, inputfile, output_tag, threads,kmer_size):
 	out_folder = os.path.join(os.path.dirname(os.path.abspath(inputfile)), output_tag)
 	out_file = os.path.join(out_folder, output_tag + "_" + os.path.basename(read).split(".")[0]) 
 	folderexist(out_folder)
-	sketcher_command = "mash sketch -o " + out_file +" -k " + kmer_size + " -p "+ threads +" -m 2 -r " + read
+	sketcher_command = ["mash",
+						"sketch",
+						"-o",
+						out_file,
+						"-k",
+						kmer_size,
+						"-p",
+						threads,
+						"-m",
+						"2",
+						"-r",
+						read]
 	print
-	print sketcher_command
+	print "Running mash sketch for reads..."
 	print
-	p=Popen(sketcher_command, stdout = PIPE, stderr = PIPE, shell=True)
+	p=Popen(sketcher_command, stdout = PIPE, stderr = PIPE)
 	p.wait()
 	stdout,stderr= p.communicate()
 	print stderr
 	return out_file + ".msh"
 
+
+## Makes the sketch command of mash for the reads to be compare to the reference.
+## According to mash turorial it is useful to provide the -m 2 option in order to remove single-copy k-mers
+def sketch_sequences(sequence, inputfile, output_tag, threads,kmer_size):
+	out_folder = os.path.join(os.path.dirname(os.path.abspath(inputfile)), output_tag)
+	out_file = os.path.join(out_folder, output_tag + "_" + os.path.basename(sequence).split(".")[0]) 
+	folderexist(out_folder)
+	sketcher_command = ["mash",
+						"sketch",
+						"-o",
+						out_file,
+						"-k",
+						kmer_size,
+						"-p",
+						threads,
+						"-r",
+						sequence]
+	print
+	print "Running mash sketch for sequences..."
+	print
+	p=Popen(sketcher_command, stdout = PIPE, stderr = PIPE)
+	p.wait()
+	stdout,stderr= p.communicate()
+	print stderr
+	return out_file + ".msh"	
+
 ## Executes mash dist
 def masher(ref_sketch, read_sketch, output_tag, threads):
 	out_folder = os.path.join(os.path.dirname(os.path.abspath(ref_sketch)))
 	out_file = os.path.basename(read_sketch).split(".")[0]+"_distances.txt"
-	out_file_path = os.path.join(out_folder + "/" + out_file)
-	mash_command = "mash dist -p "+ threads+ " " + ref_sketch +" "+ read_sketch +" > " + out_file_path
+	out_file_path = os.path.join(out_folder, out_file)
+	mash_command = "mash dist -p {} {} {} > {}".format(threads,ref_sketch,read_sketch,out_file_path)
 	print
 	print mash_command
 	print	
@@ -123,8 +169,10 @@ def mashdist2graph(list_mash_files, tag):
 
 def main():
 	parser = argparse.ArgumentParser(description="Runs MASH using a database against sets of reads")
+	mutual_parser = parser.add_mutually_exclusive_group()
 	parser.add_argument('-i','--input_references', dest='inputfile', nargs='+', required=True, help='Provide the input fasta files to parse.')
-	parser.add_argument('-r','--reads', dest='reads', nargs='+', required=True, help='Provide the input read files to parse.')	## should implement a parser for a given directory with reads or a list file with all full path to each read library
+	mutual_parser.add_argument('-r','--reads', dest='reads', nargs='+', help='Provide the input read files to parse. Usually fastq files. This option is mutually with "-f".')	## should implement a parser for a given directory with reads or a list file with all full path to each read library
+	mutual_parser.add_argument('-f','--sequences', dest='sequences', nargs='+', help='Provide the input sequence files to parse. Usually fasta files. This option is mutually exclusive with "-r".')	## should implement a parser for a given directory with reads or a list file with all full path to each read library
 	parser.add_argument('-o','--output', dest='output_tag', required=True, help='Provide an output tag')
 	parser.add_argument('-t', '--threads', dest='threads', help='Provide the number of threads to be used. Default: 1')
 	parser.add_argument('-k', '--kmers', dest='kmer_size', help='Provide the number of k-mers to be provided to mash sketch. Default: 21')
@@ -146,11 +194,23 @@ def main():
 	main_fasta = master_fasta(fastas, args.output_tag)
 	ref_sketch=sketch_references(main_fasta,args.output_tag,threads,kmer_size)
 	list_mash_files=[]
-	for read in args.reads:
-		read_sketch = sketch_reads(read, main_fasta, args.output_tag, threads,kmer_size)
-		mash_output = masher(ref_sketch, read_sketch, args.output_tag, threads)
-		list_mash_files.append(mash_output)
-	mashdist2graph(list_mash_files, args.output_tag)
+	## checks if there are reads or sequences since different commands will be parsed to mash depending on it
+	if args.reads:
+		## used for reads
+		for read in args.reads:
+			read_sketch = sketch_reads(read, main_fasta, args.output_tag, threads,kmer_size)
+			mash_output = masher(ref_sketch, read_sketch, args.output_tag, threads)
+			list_mash_files.append(mash_output)
+		mashdist2graph(list_mash_files, args.output_tag)
+	elif args.sequences:
+		## used for sequences
+		for sequence in args.sequences:
+			sequence_sketch = sketch_sequences(sequence, main_fasta, args.output_tag, threads,kmer_size)
+			mash_output = masher(ref_sketch, sequence_sketch, args.output_tag, threads)
+			list_mash_files.append(mash_output)
+		mashdist2graph(list_mash_files, args.output_tag)
+	else:
+		print "Error: Please provide a reads file (-r option) or a sequences file (-f option)"
 
 	## remove master_fasta
 	if not args.no_remove:
