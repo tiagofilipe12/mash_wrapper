@@ -12,6 +12,9 @@ from subprocess import Popen, PIPE
 import plotly
 import plotly.graph_objs as go
 import json
+from multiprocessing import Pool
+from functools import partial
+import tqdm
 
 
 ## Checks if a directory exists and if not creates one.
@@ -20,14 +23,14 @@ def folderexist(directory):
         directory = directory + "/"
     if not os.path.exists(os.path.join(directory)):
         os.makedirs(os.path.join(directory))
-        print
-        os.path.join(directory) + " does not exist. One will be created..."
+        print(os.path.join(directory) + " does not exist. One will be "
+                                        "created...")
     else:
-        print
-        os.path.join(directory) + " exists!"
+        print(os.path.join(directory) + " exists!")
 
 
-## Function to fix several issues that fasta header names can have with some programs
+## Function to fix several issues that fasta header names can have with some
+# programs
 def header_fix(input_header):
     problematic_characters = ["|", " ", ",", ".", "(", ")", "'", "/", "[", "]",
                               ":", "{", "}"]
@@ -36,7 +39,8 @@ def header_fix(input_header):
     return input_header
 
 
-## Function to create a master fasta file from several fasta databases. One fasta is enought though
+## Function to create a master fasta file from several fasta databases. One
+# fasta is enought though
 def master_fasta(fastas, output_tag):
     master_fasta = open("master_fasta_" + output_tag + ".fas", "w")
     for filename in fastas:
@@ -67,18 +71,18 @@ def sketch_references(inputfile, output_tag, threads, kmer_size):
                         "-i",
                         inputfile]
     print
-    print "Running mash sketch for references..."
+    print("Running mash sketch for references...")
     print
     p = Popen(sketcher_command, stdout=PIPE, stderr=PIPE)
     p.wait()
     stdout, stderr = p.communicate()
-    print
-    stderr
+    print(stderr)
     return out_file + ".msh"
 
 
 ## Makes the sketch command of mash for the reads to be compare to the reference.
-## According to mash turorial it is useful to provide the -m 2 option in order to remove single-copy k-mers
+## According to mash turorial it is useful to provide the -m 2 option in order
+# to remove single-copy k-mers
 def sketch_reads(read, mainpath, output_tag, threads, kmer_size):
     out_file = os.path.join(mainpath, output_tag + "_" +
                             os.path.basename(read).split(".")[0])
@@ -96,17 +100,18 @@ def sketch_reads(read, mainpath, output_tag, threads, kmer_size):
                         "-r",
                         read]
     print
-    print "Running mash sketch for reads..."
+    print("Running mash sketch for reads...")
     print
     p = Popen(sketcher_command, stdout=PIPE, stderr=PIPE)
     p.wait()
     stdout, stderr = p.communicate()
-    print stderr
+    print(stderr)
     return out_file + ".msh"
 
 
 ## Makes the sketch command of mash for the reads to be compare to the reference.
-## According to mash turorial it is useful to provide the -m 2 option in order to remove single-copy k-mers
+## According to mash turorial it is useful to provide the -m 2 option in order
+# to remove single-copy k-mers
 def sketch_sequences(sequence, mainpath, output_tag, threads, kmer_size):
     out_file = os.path.join(mainpath, output_tag + "_" +
                             os.path.basename(sequence).split(".")[0])
@@ -122,12 +127,12 @@ def sketch_sequences(sequence, mainpath, output_tag, threads, kmer_size):
                         "-r",
                         sequence]
     print
-    print "Running mash sketch for sequences..."
+    print("Running mash sketch for sequences...")
     print
     p = Popen(sketcher_command, stdout=PIPE, stderr=PIPE)
     p.wait()
     stdout, stderr = p.communicate()
-    print stderr
+    print(stderr)
     return out_file + ".msh"
 
 
@@ -140,20 +145,46 @@ def masher(ref_sketch, read_sketch, output_tag, threads):
                                                        read_sketch,
                                                        out_file_path)
     print
-    print mash_command
+    print(mash_command)
     print
     p = Popen(mash_command, stdout=PIPE, stderr=PIPE, shell=True)
     p.wait()
     stdout, stderr = p.communicate()
-    print stderr
+    print(stderr)
     return out_file_path
 
+def masher_direct(assembly, assemblies, output_tag, threads):
+    out_folder = os.path.join(os.path.dirname(os.path.abspath(assembly)),
+                              output_tag)
+    folderexist(out_folder)
+    out_file_list = []
+    for infile in assemblies:
+        out_file = "{}_{}_{}".format(os.path.basename(infile).split(".")[0],
+                                     os.path.basename(assembly).split(".")[0],
+                                     "_distances.txt")
+        out_file_path = os.path.join(out_folder, out_file)
+        if infile != assembly and os.path.isfile(out_file_path) == False:
+            mash_command = "mash dist -p {} {} {} > {}".format(threads,
+                                                               assembly,
+                                                               infile,
+                                                               out_file_path)
+
+            print
+            print(mash_command)
+            print
+            p = Popen(mash_command, stdout=PIPE, stderr=PIPE, shell=True)
+            p.wait()
+            stdout, stderr = p.communicate()
+            print(stderr)
+            out_file_list.append(out_file_path)
+    return out_file_list
 
 ## Reads the output of mash dist and performes a barplot for each reads
 def mashdist2graph(list_mash_files, tag):
     dist_dict = {}
     trace_list = []
-    ## First reads mash output files and creates a sorted dictionary for each file by mash distance (from highest to lowest values)
+    ## First reads mash output files and creates a sorted dictionary for each
+    # file by mash distance (from highest to lowest values)
     for in_file in list_mash_files:
         dist_file = open(in_file, 'r')
         for line in dist_file:
@@ -163,7 +194,8 @@ def mashdist2graph(list_mash_files, tag):
             mash_distance = tab_split[2]
             p_value = tab_split[3]
             if float(
-                    p_value) < 0.05:  ## filters distances with no significant p-values
+                    p_value) < 0.05:  ## filters distances with no significant
+                # p-values
                 dist_dict[reference_id] = mash_distance
         ## Orders the dictionary from the minor distances to the major
         sorted_dist_dict = sorted(dist_dict.items(),
@@ -175,7 +207,8 @@ def mashdist2graph(list_mash_files, tag):
             if k not in global_reference:
                 global_reference.append(k)
             global_values.append(1 - float(
-                v))  # converts mash distances to mash "similarities", i.e., inverts the scale.
+                v))  # converts mash distances to mash "similarities", i.e.,
+            # inverts the scale.
         trace = go.Bar(x=global_reference, y=global_values, name=query_id)
         trace_list.append(trace)
 
@@ -199,7 +232,8 @@ def json_dumping(mash_output, pvalue, mashdist, output_tag):
         seq_string = tab_split[1].split(".")[0].strip()
         mash_dist = tab_split[2].strip()
         p_value = tab_split[3].strip()
-        ## there is no need to store all values since we are only interested in representing the significant ones
+        ## there is no need to store all values since we are only interested in
+        # representing the significant ones
         ## and those that correlate well with ANI (mashdist<=0.1)
         if float(p_value) < float(pvalue) and float(mash_dist) < float(mashdist):
             temporary_list.append([ref_accession, mash_dist])
@@ -210,6 +244,55 @@ def json_dumping(mash_output, pvalue, mashdist, output_tag):
     out_file.write(json.dumps(master_dict))
     out_file.close()
 
+## calculates ths distances between pairwise genomes
+## This function should be multiprocessed in order to retrieve several output
+# files (as many as the specified cores specified?)
+def mash_distance_matrix(list_mash_files, pvalue, mashdist, threads,
+                         output_tag):
+    # new mp module
+    pool = Pool(int(threads))  # Create a multiprocessing Pool
+    mp2 = pool.map(partial(multiprocess_mash_file, pvalue, mashdist),
+                   list_mash_files)
+    # process list_mash_files iterable with pool
+    ## loop to print a nice progress bar
+    try:
+        for _ in tqdm.tqdm(mp2, total=len(list_mash_files)):
+            pass
+    except:
+        print("progress will not be tracked because of 'reasons'... check if "
+              "you have tqdm package installed.")
+    pool.close()
+    pool.join()  ## needed in order for the process to end before the remaining
+    # options are triggered
+
+    ## parse to output file the list
+    output_file = open(output_tag + "mash_wrapper_results.txt", 'w')
+    output_file.write("sequence\treference\tdistance\n")
+    for sequence_list in mp2:
+        output_file.write(sequence_list[-1])
+        output_file.write("\t{}\t{}\n".format(sequence_list[0][0], sequence_list[0][1]))
+
+    output_file.close()
+
+
+def multiprocess_mash_file(pvalue, mashdist, in_folder):
+    input_f = open(os.path.join(in_folder), 'r')
+    temporary_list = []
+
+    #  mash dist specified in each sequence/genome
+    for line in input_f:
+        tab_split = line.split("\t")
+        ref = tab_split[0].strip()
+        seq = tab_split[1].strip()
+        mash_dist = tab_split[2].strip()
+        p_value = tab_split[3].strip()
+
+        if float(p_value) < float(pvalue) and ref != seq and float(
+                mash_dist) < float(mashdist):
+            temporary_list.append([ref, mash_dist])
+    #print temporary_list
+    temporary_list.append(seq)
+    return temporary_list
 
 def main():
     parser = argparse.ArgumentParser(
@@ -219,37 +302,56 @@ def main():
 
     mutual_parser_2.add_argument('-i', '--input_references', dest='inputfile',
                                  nargs='+',
-                                 help='Provide the input fasta files to parse.')
+                                 help='Provide the input fasta files to '
+                                      'parse. Not required for multiple '
+                                      'comparisons between assemblies.')
     mutual_parser_2.add_argument('-rs', '--reference_sketch',
                                  dest='ref_sketch',
-                                 help='If you have a reference sketch for references '
+                                 help='If you have a reference sketch for '
+                                      'references '
                                       'provide it with this option.')
     mutual_parser.add_argument('-r', '--reads', dest='reads', nargs='+',
-                               help='Provide the input read files to parse. Usually fastq files. This option is mutually with "-f".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
+                               help='Provide the input read files to parse. '
+                                    'Usually fastq files. This option is '
+                                    'mutually with "-f".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
     mutual_parser.add_argument('-f', '--sequences', dest='sequences',
                                nargs='+',
-                               help='Provide the input sequence files to parse. Usually fasta files. This option is mutually exclusive with "-r".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
+                               help='Provide the input sequence files to parse. '
+                                    'Usually fasta files. This option is mutually exclusive with "-r".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
+    mutual_parser.add_argument('-a', '--assemblies', dest='assemblies',
+                               nargs='+',
+                               help='Provide the input assemblies files to '
+                                    'parse. '
+                                    'Usually fasta files. This option is mutually exclusive with "-r".')
 
     parser.add_argument('-o', '--output', dest='output_tag', required=True,
                         help='Provide an output tag')
     parser.add_argument('-t', '--threads', dest='threads',
-                        help='Provide the number of threads to be used. Default: 1')
+                        help='Provide the number of threads to be used. '
+                             'Default: 1')
 
     mash_options = parser.add_argument_group('MASH related options')
     mash_options.add_argument('-k', '--kmers', dest='kmer_size',
-                              help='Provide the number of k-mers to be provided to mash sketch. Default: 21')
+                              help='Provide the number of k-mers to be provided'
+                                   ' to mash sketch. Default: 21')
     mash_options.add_argument('-p', '--pvalue', dest='pvalue', default="0.05",
-                              help='Provide the p-value to consider a distance significant. Default: 0.05.')
+                              help='Provide the p-value to consider a distance'
+                                   ' significant. Default: 0.05.')
     mash_options.add_argument('-md', '--mashdist', dest='mashdistance',
                               default="0.1",
-                              help='Provide the maximum mash distance to be parsed to the matrix. Default: 0.1.')
+                              help='Provide the maximum mash distance to be'
+                                   ' parsed to the matrix. Default: 0.1.')
 
     parser.add_argument('-no_rm', '--no-remove', dest='no_remove',
                         action='store_true',
-                        help='Specify if you do not want to remove the output concatenated fasta.')
-    parser.add_argument('-j', '--json', dest='json', action='store_true', help='If you desire to '
-                                                          'export a json file with all significant entries use'
-                                                          'this options.')
+                        help='Specify if you do not want to remove the output'
+                             ' concatenated fasta.')
+    parser.add_argument('-j', '--json', dest='json', action='store_true',
+                        help='If you desire to export a json file with all '
+                             'significant entries use this options.')
+    parser.add_argument('-ms', '--mashix', dest='mashix', action='store_true',
+                        help='Perform a matrix of all mash distance, taking '
+                             'all files.')
 
     args = parser.parse_args()
 
@@ -282,11 +384,12 @@ def main():
         mainpath = os.path.dirname(os.path.abspath(ref_sketch))
 
     else:
-        print "Error no reference sketch or fasta was provided"
+        print("Error no reference sketch or fasta was provided")
 
     list_mash_files = []
 
-    ## checks if there are reads or sequences since different commands will be parsed to mash depending on it
+    ## checks if there are reads or sequences since different commands will be
+    # parsed to mash depending on it
     if args.reads:
         ## used for reads
         for read in args.reads:
@@ -304,6 +407,10 @@ def main():
     elif args.sequences:
         ## used for sequences
         for sequence in args.sequences:
+            if any(x in filename for x in
+                   [".fas", ".fasta", ".fna", ".fsa", ".fa"]):
+                fastas.append(filename)
+
             sequence_sketch = sketch_sequences(sequence, mainpath,
                                                args.output_tag, threads,
                                                kmer_size)
@@ -315,9 +422,19 @@ def main():
 
             list_mash_files.append(mash_output)
         mashdist2graph(list_mash_files, args.output_tag)
+    elif args.assemblies:
+        list_mash_files = []
+        for assembly in args.assemblies:
+            mash_files = masher_direct(assembly, args.assemblies,
+                                             args.output_tag, threads)
+            list_mash_files += mash_files
     else:
-        print "Error: Please provide a reads file (-r option) or a sequences " \
-        "file (-f option)"
+        print("Error: Please provide a reads file (-r option) or a sequences "
+              "file (-f option)")
+
+    if args.mashix:
+        mash_distance_matrix(list_mash_files, pvalue, mashdist, threads,
+                             args.output_tag)
 
     ## remove master_fasta
     if not args.no_remove:
@@ -325,7 +442,6 @@ def main():
             os.remove(main_fasta)
         except:
             pass
-
 
 if __name__ == "__main__":
     main()
