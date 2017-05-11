@@ -163,7 +163,7 @@ def masher_direct(assembly, assemblies, output_tag, threads):
                                      os.path.basename(assembly).split(".")[0],
                                      "_distances.txt")
         out_file_path = os.path.join(out_folder, out_file)
-        if infile != assembly and os.path.isfile(out_file_path) == False:
+        if infile != assembly:
             mash_command = "mash dist -p {} {} {} > {}".format(threads,
                                                                assembly,
                                                                infile,
