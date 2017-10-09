@@ -400,8 +400,7 @@ def main():
         ## used for reads
         for read in args.reads:
             read_sketch = sketch_reads(read, mainpath, args.output_tag,
-                                       threads,
-                                       kmer_size)
+                                       threads, kmer_size)
             mash_output = masher(ref_sketch, read_sketch, args.output_tag,
                                  threads)
             ## parses distances.txt to json file
@@ -428,12 +427,12 @@ def main():
 
             list_mash_files.append(mash_output)
         mashdist2graph(list_mash_files, args.output_tag)
-    elif args.assemblies:
-        list_mash_files = []
-        for assembly in args.assemblies:
-            mash_files = masher_direct(assembly, args.assemblies,
-                                             args.output_tag, threads)
-            list_mash_files += mash_files
+    # elif args.assemblies:
+    #     list_mash_files = []
+    #     for assembly in args.assemblies:
+    #         mash_files = masher_direct(assembly, args.assemblies,
+    #                                          args.output_tag, threads)
+    #         list_mash_files += mash_files
     else:
         print("Error: Please provide a reads file (-r option) or a sequences "
               "file (-f option)")
