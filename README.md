@@ -16,8 +16,8 @@ optional arguments:
                         If you have a reference sketch for references provide
                         it with this option.
   -r READS [READS ...], --reads READS [READS ...]
-                        Provide the input read files to parse. Usually fastq
-                        files. This option is mutually with "-f".
+                        Provide the input read files to parse. Usually fastq 1
+                        or 2 files. This option is mutually with "-f".
   -f SEQUENCES [SEQUENCES ...], --sequences SEQUENCES [SEQUENCES ...]
                         Provide the input sequence files to parse. Usually
                         fasta files. This option is mutually exclusive with
@@ -30,7 +30,7 @@ optional arguments:
                         concatenated fasta.
   -j, --json            If you desire to export a json file with all
                         significant entries use this options.
-  -ms, --mashix         Perform a matrix of all mash distance, taking all
+  -m, --mashix          Perform a matrix of all mash distance, taking all
                         files.
 
 MASH related options:
@@ -43,7 +43,14 @@ MASH related options:
   -md MASHDISTANCE, --mashdist MASHDISTANCE
                         Provide the maximum mash distance to be parsed to the
                         matrix. Default: 0.1.
-
+  -ms, --mashscreen     Runs mash screen. This will prevent mash dist to run.
+  -w, --winner_takes_it_all
+                        Uses the winner takes it all function to remove
+                        redundancy from mash screen results. NOTE: DO NOT USE
+                        FOR PLASMID ID!
+  -id MIN_IDENTITY, --min_identity MIN_IDENTITY
+                        Provide the minimum identity for mash screen run.
+                        Default is 0, reporting all values
 ```
 
 ---

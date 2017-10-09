@@ -134,19 +134,18 @@ def screen2json(mash_output):
         dic[query_id] = [identity, median_multiplicity]
         median_list.append(float(median_multiplicity))
 
-    print("first", len(dic))
-
+    # median cutoff is twice the median of all median_multiplicity values
+    # reported by mash screen. In the case of plasmids, since the database
+    # has 9k entries and reads shouldn't have that many sequences it seems ok...
+    # TODO but needs further testing
     median_cutoff = np.median(median_list)*2
-
-    print(median_cutoff)
 
     output_json = open(" ".join(mash_output.split(".")[:-1]) + ".json", "w")
 
     filtered_dic = {}
     for k,v in dic.items():
         # assure that plasmid as at least twice the median coverage depth
-        if float(v[1]) > median_cutoff: filtered_dic[k] = v[0]
-    print("second", len(filtered_dic))
-    print(filtered_dic)
+        if float(v[1]) > median_cutoff: filtered_dic[k] = [v[0], v[1]]
+    print("Exported dictionary has {} entries".format(len(filtered_dic)))
     output_json.write(json.dumps(filtered_dic))
     output_json.close()
