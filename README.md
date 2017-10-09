@@ -22,10 +22,6 @@ optional arguments:
                         Provide the input sequence files to parse. Usually
                         fasta files. This option is mutually exclusive with
                         "-r".
-  -a ASSEMBLIES [ASSEMBLIES ...], --assemblies ASSEMBLIES [ASSEMBLIES ...]
-                        Provide the input assemblies files to parse. Usually
-                        fasta files. This option is mutually exclusive with
-                        "-r".
   -o OUTPUT_TAG, --output OUTPUT_TAG
                         Provide an output tag
   -t THREADS, --threads THREADS

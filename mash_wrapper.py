@@ -320,12 +320,12 @@ def main():
                                help='Provide the input sequence files to parse. '
                                     'Usually fasta files. This option is '
                                     'mutually exclusive with "-r".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
-    mutual_parser.add_argument('-a', '--assemblies', dest='assemblies',
-                               nargs='+',
-                               help='Provide the input assemblies files to '
-                                    'parse. '
-                                    'Usually fasta files. This option is '
-                                    'mutually exclusive with "-r".')
+    # mutual_parser.add_argument('-a', '--assemblies', dest='assemblies',
+    #                            nargs='+',
+    #                            help='Provide the input assemblies files to '
+    #                                 'parse. '
+    #                                 'Usually fasta files. This option is '
+    #                                 'mutually exclusive with "-r".')
 
     parser.add_argument('-o', '--output', dest='output_tag', required=True,
                         help='Provide an output tag')
@@ -354,6 +354,10 @@ def main():
                               default="0.1",
                               help='Provide the maximum mash distance to be'
                                    ' parsed to the matrix. Default: 0.1.')
+    ## mash screen related options
+    mash_options.add_argument("-ms", "--mashscreen", dest="mashscreen",
+                              help="runs mash screen")
+    mash_options.add_argument("")
 
     args = parser.parse_args()
 
