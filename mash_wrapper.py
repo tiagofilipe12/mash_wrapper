@@ -310,6 +310,7 @@ def main():
                                  help='If you have a reference sketch for '
                                       'references '
                                       'provide it with this option.')
+
     mutual_parser.add_argument('-r', '--reads', dest='reads', nargs='+',
                                help='Provide the input read files to parse. '
                                     'Usually fastq files. This option is '
@@ -317,18 +318,30 @@ def main():
     mutual_parser.add_argument('-f', '--sequences', dest='sequences',
                                nargs='+',
                                help='Provide the input sequence files to parse. '
-                                    'Usually fasta files. This option is mutually exclusive with "-r".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
+                                    'Usually fasta files. This option is '
+                                    'mutually exclusive with "-r".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
     mutual_parser.add_argument('-a', '--assemblies', dest='assemblies',
                                nargs='+',
                                help='Provide the input assemblies files to '
                                     'parse. '
-                                    'Usually fasta files. This option is mutually exclusive with "-r".')
+                                    'Usually fasta files. This option is '
+                                    'mutually exclusive with "-r".')
 
     parser.add_argument('-o', '--output', dest='output_tag', required=True,
                         help='Provide an output tag')
     parser.add_argument('-t', '--threads', dest='threads',
                         help='Provide the number of threads to be used. '
                              'Default: 1')
+    parser.add_argument('-no_rm', '--no-remove', dest='no_remove',
+                        action='store_true',
+                        help='Specify if you do not want to remove the output'
+                             ' concatenated fasta.')
+    parser.add_argument('-j', '--json', dest='json', action='store_true',
+                        help='If you desire to export a json file with all '
+                             'significant entries use this options.')
+    parser.add_argument('-ms', '--mashix', dest='mashix', action='store_true',
+                        help='Perform a matrix of all mash distance, taking '
+                             'all files.')
 
     mash_options = parser.add_argument_group('MASH related options')
     mash_options.add_argument('-k', '--kmers', dest='kmer_size',
@@ -341,17 +354,6 @@ def main():
                               default="0.1",
                               help='Provide the maximum mash distance to be'
                                    ' parsed to the matrix. Default: 0.1.')
-
-    parser.add_argument('-no_rm', '--no-remove', dest='no_remove',
-                        action='store_true',
-                        help='Specify if you do not want to remove the output'
-                             ' concatenated fasta.')
-    parser.add_argument('-j', '--json', dest='json', action='store_true',
-                        help='If you desire to export a json file with all '
-                             'significant entries use this options.')
-    parser.add_argument('-ms', '--mashix', dest='mashix', action='store_true',
-                        help='Perform a matrix of all mash distance, taking '
-                             'all files.')
 
     args = parser.parse_args()
 
