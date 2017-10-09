@@ -1,6 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
-## Last update: 28/4/2017
+## Last update: 9/10/2017
 ## Author: T.F. Jesus
 ## This script runs MASH in plasmid databases.
 ## Note: each header in fasta is considered a reference
@@ -15,7 +15,8 @@ import json
 from multiprocessing import Pool
 from functools import partial
 import tqdm
-
+from utils.args_limit import required_length
+from utils. mashscreen2json import mashscreen, sort_mash_screen, screen2json
 
 ## Checks if a directory exists and if not creates one.
 def folderexist(directory):
@@ -70,9 +71,7 @@ def sketch_references(inputfile, output_tag, threads, kmer_size):
                         threads,
                         "-i",
                         inputfile]
-    print
-    print("Running mash sketch for references...")
-    print
+    print("\nRunning mash sketch for references...\n")
     p = Popen(sketcher_command, stdout=PIPE, stderr=PIPE)
     p.wait()
     stdout, stderr = p.communicate()
@@ -126,9 +125,7 @@ def sketch_sequences(sequence, mainpath, output_tag, threads, kmer_size):
                         threads,
                         "-r",
                         sequence]
-    print
-    print("Running mash sketch for sequences...")
-    print
+    print("\nRunning mash sketch for sequences...\n")
     p = Popen(sketcher_command, stdout=PIPE, stderr=PIPE)
     p.wait()
     stdout, stderr = p.communicate()
@@ -144,40 +141,38 @@ def masher(ref_sketch, read_sketch, output_tag, threads):
     mash_command = "mash dist -p {} {} {} > {}".format(threads, ref_sketch,
                                                        read_sketch,
                                                        out_file_path)
-    print
-    print(mash_command)
-    print
+    print("\n{}\n".format(mash_command))
     p = Popen(mash_command, stdout=PIPE, stderr=PIPE, shell=True)
     p.wait()
     stdout, stderr = p.communicate()
     print(stderr)
     return out_file_path
 
-def masher_direct(assembly, assemblies, output_tag, threads):
-    out_folder = os.path.join(os.path.dirname(os.path.abspath(assembly)),
-                              output_tag)
-    folderexist(out_folder)
-    out_file_list = []
-    for infile in assemblies:
-        out_file = "{}_{}_{}".format(os.path.basename(infile).split(".")[0],
-                                     os.path.basename(assembly).split(".")[0],
-                                     "_distances.txt")
-        out_file_path = os.path.join(out_folder, out_file)
-        if infile != assembly:
-            mash_command = "mash dist -p {} {} {} > {}".format(threads,
-                                                               assembly,
-                                                               infile,
-                                                               out_file_path)
-
-            print
-            print(mash_command)
-            print
-            p = Popen(mash_command, stdout=PIPE, stderr=PIPE, shell=True)
-            p.wait()
-            stdout, stderr = p.communicate()
-            print(stderr)
-            out_file_list.append(out_file_path)
-    return out_file_list
+# def masher_direct(assembly, assemblies, output_tag, threads):
+#     out_folder = os.path.join(os.path.dirname(os.path.abspath(assembly)),
+#                               output_tag)
+#     folderexist(out_folder)
+#     out_file_list = []
+#     for infile in assemblies:
+#         out_file = "{}_{}_{}".format(os.path.basename(infile).split(".")[0],
+#                                      os.path.basename(assembly).split(".")[0],
+#                                      "_distances.txt")
+#         out_file_path = os.path.join(out_folder, out_file)
+#         if infile != assembly:
+#             mash_command = "mash dist -p {} {} {} > {}".format(threads,
+#                                                                assembly,
+#                                                                infile,
+#                                                                out_file_path)
+#
+#             print
+#             print(mash_command)
+#             print
+#             p = Popen(mash_command, stdout=PIPE, stderr=PIPE, shell=True)
+#             p.wait()
+#             stdout, stderr = p.communicate()
+#             print(stderr)
+#             out_file_list.append(out_file_path)
+#     return out_file_list
 
 ## Reads the output of mash dist and performes a barplot for each reads
 def mashdist2graph(list_mash_files, tag):
@@ -311,10 +306,11 @@ def main():
                                       'references '
                                       'provide it with this option.')
 
-    mutual_parser.add_argument('-r', '--reads', dest='reads', nargs='+',
+    mutual_parser.add_argument('-r', '--reads', dest='reads', nargs="+",
+                               action=required_length(1,2),
                                help='Provide the input read files to parse. '
-                                    'Usually fastq files. This option is '
-                                    'mutually with "-f".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
+                                    'Usually fastq 1 or 2 files. This option '
+                                    'is mutually with "-f".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
     mutual_parser.add_argument('-f', '--sequences', dest='sequences',
                                nargs='+',
                                help='Provide the input sequence files to parse. '
@@ -339,7 +335,7 @@ def main():
     parser.add_argument('-j', '--json', dest='json', action='store_true',
                         help='If you desire to export a json file with all '
                              'significant entries use this options.')
-    parser.add_argument('-ms', '--mashix', dest='mashix', action='store_true',
+    parser.add_argument('-m', '--mashix', dest='mashix', action='store_true',
                         help='Perform a matrix of all mash distance, taking '
                              'all files.')
 
@@ -356,8 +352,19 @@ def main():
                                    ' parsed to the matrix. Default: 0.1.')
     ## mash screen related options
     mash_options.add_argument("-ms", "--mashscreen", dest="mashscreen",
-                              help="runs mash screen")
-    mash_options.add_argument("")
+                              action="store_true",
+                              help="Runs mash screen. This will prevent mash "
+                                   "dist to run.")
+    mash_options.add_argument("-w", "--winner_takes_it_all", dest="winner",
+                              action="store_true",
+                              help="Uses the winner takes it all function to "
+                                   "remove redundancy from mash screen "
+                                   "results. NOTE: DO NOT USE FOR PLASMID ID!")
+    mash_options.add_argument("-id", "--min_identity", dest="min_identity",
+                              default="0.9", help="Provide the minimum "
+                                                  "identity "
+                                                "for mash screen run. Default "
+                                                "is 0, reporting all values")
 
     args = parser.parse_args()
 
@@ -398,17 +405,28 @@ def main():
     # parsed to mash depending on it
     if args.reads:
         ## used for reads
-        for read in args.reads:
-            read_sketch = sketch_reads(read, mainpath, args.output_tag,
-                                       threads, kmer_size)
-            mash_output = masher(ref_sketch, read_sketch, args.output_tag,
-                                 threads)
-            ## parses distances.txt to json file
-            if args.json:
-                json_dumping(mash_output, pvalue, mashdist, args.output_tag)
+        if not args.mashscreen:
+            for read in args.reads:
+                read_sketch = sketch_reads(read, mainpath, args.output_tag,
+                                           threads, kmer_size)
+                mash_output = masher(ref_sketch, read_sketch, args.output_tag,
+                                     threads)
+                ## parses distances.txt to json file
+                if args.json:
+                    json_dumping(mash_output, pvalue, mashdist, args.output_tag)
 
-            list_mash_files.append(mash_output)
-        mashdist2graph(list_mash_files, args.output_tag)
+                list_mash_files.append(mash_output)
+            mashdist2graph(list_mash_files, args.output_tag)
+        else:
+            # folderexist(mainpath) # checks main path
+            # screen_out_file = mashscreen(ref_sketch, mainpath, args.output_tag,
+            #                      threads, pvalue,
+            #            args.winner, args.min_identity, args.reads)
+            # mash_output = sort_mash_screen(screen_out_file)
+            if args.json:
+                #screen2json(mash_output)
+                screen2json("/home/tiago/Documents/mash_wrapper_tests/testing_2_sorted.tab")
+
     elif args.sequences:
         ## used for sequences
         for sequence in args.sequences:
