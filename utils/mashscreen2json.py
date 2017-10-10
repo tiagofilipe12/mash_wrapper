@@ -8,6 +8,7 @@ import os
 from subprocess import Popen, PIPE
 import numpy as np
 import json
+from .shell_functions import shell_true, shell_false
 
 def mashscreen(ref_sketch, main_path, output_tag, threads, pvalue,
                winner, min_identity, reads):
@@ -70,10 +71,7 @@ def mashscreen(ref_sketch, main_path, output_tag, threads, pvalue,
 
     # Runs mash screen
     print("\nRunning mash screen for reads...\n{}\n".format(command))
-    p = Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
-    p.wait()
-    stdout, stderr = p.communicate()
-    print(stdout, stderr)
+    shell_true(command)
     return out_file
 
 def sort_mash_screen(out_file):
@@ -92,10 +90,11 @@ def sort_mash_screen(out_file):
     sorted_out_file = " ".join(out_file.split(".")[:-1]) + "_sorted.tab"
     sorter_command = "sort -gr {} > {}".format(out_file, sorted_out_file)
     print("\nSorting {}...\n{}\n".format(out_file, sorter_command))
-    p = Popen(sorter_command, stdout=PIPE, stderr=PIPE, shell=True)
-    p.wait()
-    stdout, stderr = p.communicate()
-    print(stdout, stderr)
+    shell_true(sorter_command)
+    # p = Popen(sorter_command, stdout=PIPE, stderr=PIPE, shell=True)
+    # p.wait()
+    # stdout, stderr = p.communicate()
+    # print(stdout, stderr)
     return sorted_out_file
 
 def screen2json(mash_output):
@@ -144,8 +143,11 @@ def screen2json(mash_output):
 
     filtered_dic = {}
     for k,v in dic.items():
+        # estimated copy number
+        copy_number = int(float(v[1])/median_cutoff)
         # assure that plasmid as at least twice the median coverage depth
-        if float(v[1]) > median_cutoff: filtered_dic[k] = [v[0], v[1]]
+        if float(v[1]) > median_cutoff: filtered_dic[k] = [v[0],
+                                                           str(copy_number)]
     print("Exported dictionary has {} entries".format(len(filtered_dic)))
     output_json.write(json.dumps(filtered_dic))
     output_json.close()

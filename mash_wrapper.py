@@ -418,14 +418,14 @@ def main():
                 list_mash_files.append(mash_output)
             mashdist2graph(list_mash_files, args.output_tag)
         else:
-            # folderexist(mainpath) # checks main path
-            # screen_out_file = mashscreen(ref_sketch, mainpath, args.output_tag,
-            #                      threads, pvalue,
-            #            args.winner, args.min_identity, args.reads)
-            # mash_output = sort_mash_screen(screen_out_file)
+            folderexist(mainpath) # checks main path
+            screen_out_file = mashscreen(ref_sketch, mainpath, args.output_tag,
+                                 threads, pvalue,
+                       args.winner, args.min_identity, args.reads)
+            mash_output = sort_mash_screen(screen_out_file)
             if args.json:
-                #screen2json(mash_output)
-                screen2json("/home/tiago/Documents/mash_wrapper_tests/testing_2_sorted.tab")
+                screen2json(mash_output)
+                #screen2json("/home/tiago/Documents/mash_wrapper_tests/testing_2_sorted.tab")
 
     elif args.sequences:
         ## used for sequences
