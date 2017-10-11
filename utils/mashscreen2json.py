@@ -8,7 +8,7 @@ import os
 from subprocess import Popen, PIPE
 import numpy as np
 import json
-from .shell_functions import shell_true, shell_false
+from .shell_functions import shell_stdout_write
 
 def mashscreen(ref_sketch, main_path, output_tag, threads, pvalue,
                winner, min_identity, reads):
@@ -39,39 +39,40 @@ def mashscreen(ref_sketch, main_path, output_tag, threads, pvalue,
     # checks if there is two or one argument in reads
     # establishes default command
     if len(reads) > 1:
-        command = "mash screen -i {} -v {} -p {} {} {} {} > {}".format(
-            min_identity,
-            pvalue,
-            threads,
-            ref_sketch,
-            reads[0],
-            reads[1],
-            out_file
-        )
+        command = ["mash",
+                   "screen",
+                   "-i",
+                   min_identity,
+                   "-v",
+                   pvalue,
+                   "-p",
+                   threads,
+                   ref_sketch,
+                   reads[0],
+                   reads[1]]
+    # if single read file is provided...
     elif len(reads) == 1:
-        command = "mash screen -i {} -v {} -p {} {} {} > {}".format(
-            min_identity,
-            pvalue,
-            threads,
-            ref_sketch,
-            reads[0],
-            out_file
-        )
+        command = ["mash",
+                   "screen",
+                   "-i",
+                   min_identity,
+                   "-v",
+                   pvalue,
+                   "-p",
+                   threads,
+                   ref_sketch,
+                   reads[0]]
     else:
         print("no reads were provided. Please provide one to two read "
               "sequences in fastq.")
 
     # checks if winner takes it all is defined
     if winner:
-        command = "{}{} > {}".format(
-            command.split(">")[0],
-            "-w",
-            out_file
-        )
+        command = command.append("-w")
 
     # Runs mash screen
-    print("\nRunning mash screen for reads...\n{}\n".format(command))
-    shell_true(command)
+    print("\nRunning mash screen for reads...\n{}\n".format(" ".join(command)))
+    shell_stdout_write(command, out_file)
     return out_file
 
 def sort_mash_screen(out_file):
@@ -88,13 +89,11 @@ def sort_mash_screen(out_file):
 
     '''
     sorted_out_file = " ".join(out_file.split(".")[:-1]) + "_sorted.tab"
-    sorter_command = "sort -gr {} > {}".format(out_file, sorted_out_file)
-    print("\nSorting {}...\n{}\n".format(out_file, sorter_command))
-    shell_true(sorter_command)
-    # p = Popen(sorter_command, stdout=PIPE, stderr=PIPE, shell=True)
-    # p.wait()
-    # stdout, stderr = p.communicate()
-    # print(stdout, stderr)
+    sorter_command = ["sort",
+                      "-gr",
+                      out_file]
+    print("\nSorting {}...\n{}\n".format(out_file, " ".join(sorter_command)))
+    shell_stdout_write(sorter_command, sorted_out_file)
     return sorted_out_file
 
 def screen2json(mash_output):
