@@ -84,8 +84,8 @@ def sort_mash_screen(out_file):
         this string stores th path to the file to be sorted
 
     Returns
-    sorted_out_file: str
     -------
+    sorted_out_file: str
 
     '''
     sorted_out_file = " ".join(out_file.split(".")[:-1]) + "_sorted.tab"
