@@ -16,7 +16,7 @@ from multiprocessing import Pool
 from functools import partial
 import tqdm
 from utils.args_limit import required_length
-from utils. mashscreen2json import mashscreen, sort_mash_screen, screen2json
+from utils.mashscreen2json import mashscreen, sort_mash_screen, screen2json
 
 ## Checks if a directory exists and if not creates one.
 def folderexist(directory):
