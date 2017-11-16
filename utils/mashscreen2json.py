@@ -5,7 +5,7 @@
 # mash screen ../../../plasmid_db_07202017/fasta/mash_screen_test.msh 5474_EP42_15_1_trimmed.fastq 5474_EP42_15_2_trimmed.fastq -p 7 > screen.tab
 
 import os
-from subprocess import Popen, PIPE
+#from subprocess import Popen, PIPE
 import numpy as np
 import json
 from .shell_functions import shell_stdout_write
@@ -129,6 +129,9 @@ def screen2json(mash_output):
         # estimation of the coverage depth for each plasmid.
         # Plasmids should have higher coverage depth due to their increased
         # copy number in relation to the chromosome.
+        # TODO this only is valid for relative estimate of copy number (
+        # TODO relative to all plasmids in results)
+        # TODO basically a median of the coverage of all plasmids
         dic[query_id] = [identity, median_multiplicity]
         median_list.append(float(median_multiplicity))
 
@@ -136,6 +139,7 @@ def screen2json(mash_output):
     # reported by mash screen. In the case of plasmids, since the database
     # has 9k entries and reads shouldn't have that many sequences it seems ok...
     # TODO but needs further testing
+    # TODO maybe the cutoff can be ignored for filtering
     median_cutoff = np.median(median_list)*2
 
     output_json = open(" ".join(mash_output.split(".")[:-1]) + ".json", "w")
