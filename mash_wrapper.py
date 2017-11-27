@@ -225,9 +225,10 @@ def json_dumping(mash_output, pvalue, mashdist, output_tag):
         # representing the significant ones
         ## and those that correlate well with ANI (mashdist<=0.1)
         if float(p_value) < float(pvalue) and float(mash_dist) < float(mashdist):
-            temporary_list.append([ref_accession, mash_dist])
-    if temporary_list:
-        master_dict[seq_string] = temporary_list
+            # temporary_list.append([ref_accession, mash_dist])
+            master_dict[ref_accession] = mash_dist
+    # if temporary_list:
+    #     master_dict[ref_accession] = temporary_list
         ## writes output json
 
     out_file.write(json.dumps(master_dict))
