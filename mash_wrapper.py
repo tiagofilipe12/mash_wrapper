@@ -430,9 +430,9 @@ def main():
     elif args.sequences:
         ## used for sequences
         for sequence in args.sequences:
-            if any(x in filename for x in
+            if any(x in sequence for x in
                    [".fas", ".fasta", ".fna", ".fsa", ".fa"]):
-                fastas.append(filename)
+                fastas.append(sequence)
 
             sequence_sketch = sketch_sequences(sequence, mainpath,
                                                args.output_tag, threads,
