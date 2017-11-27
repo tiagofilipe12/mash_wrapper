@@ -148,15 +148,15 @@ def masher(ref_sketch, read_sketch, output_tag, threads):
     print(stderr)
     return out_file_path
 
-def masher_direct(assembly, output_tag, threads):
+def masher_direct(ref_sketch, assembly, output_tag, threads):
     out_folder = os.path.join(os.path.dirname(os.path.abspath(assembly)),
                               output_tag)
     folderexist(out_folder)
-    out_file_list = []
-    out_file = "{}_{}".format(os.path.basename(assembly).split(".")[0],
+    out_file = "{}_{}".format(os.path.basename(assembly),
                                  "_distances.txt")
     out_file_path = os.path.join(out_folder, out_file)
-    mash_command = "mash dist -p {} {} > {}".format(threads, assembly,
+    mash_command = "mash dist -p {} {} {} > {}".format(threads, ref_sketch,
+                                                       assembly,
                                                        out_file_path)
 
     print
@@ -441,7 +441,7 @@ def main():
     elif args.assemblies:
         list_mash_files = []
         for assembly in args.assemblies:
-            masher_direct(assembly, args.output_tag, threads)
+            masher_direct(ref_sketch, assembly, args.output_tag, threads)
             list_mash_files += assembly
     else:
         print("Error: Please provide a reads file (-r option) or a sequences "
