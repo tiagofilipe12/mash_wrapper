@@ -148,31 +148,27 @@ def masher(ref_sketch, read_sketch, output_tag, threads):
     print(stderr)
     return out_file_path
 
-def masher_direct(assembly, assemblies, output_tag, threads):
+def masher_direct(assembly, output_tag, threads):
     out_folder = os.path.join(os.path.dirname(os.path.abspath(assembly)),
                               output_tag)
     folderexist(out_folder)
     out_file_list = []
-    for infile in assemblies:
-        out_file = "{}_{}_{}".format(os.path.basename(infile).split(".")[0],
-                                     os.path.basename(assembly).split(".")[0],
-                                     "_distances.txt")
-        out_file_path = os.path.join(out_folder, out_file)
-        if infile != assembly:
-            mash_command = "mash dist -p {} {} {} > {}".format(threads,
-                                                               assembly,
-                                                               infile,
-                                                               out_file_path)
+    out_file = "{}_{}_{}".format(os.path.basename(infile).split(".")[0],
+                                 os.path.basename(assembly).split(".")[0],
+                                 "_distances.txt")
+    out_file_path = os.path.join(out_folder, out_file)
+    mash_command = "mash dist -p {} {} {} > {}".format(threads,
+                                                       assembly,
+                                                       infile,
+                                                       out_file_path)
 
-            print
-            print(mash_command)
-            print
-            p = Popen(mash_command, stdout=PIPE, stderr=PIPE, shell=True)
-            p.wait()
-            stdout, stderr = p.communicate()
-            print(stderr)
-            out_file_list.append(out_file_path)
-    return out_file_list
+    print
+    print(mash_command)
+    print
+    p = Popen(mash_command, stdout=PIPE, stderr=PIPE, shell=True)
+    p.wait()
+    stdout, stderr = p.communicate()
+    print(stderr)
 
 ## Reads the output of mash dist and performes a barplot for each reads
 def mashdist2graph(list_mash_files, tag):
@@ -428,7 +424,6 @@ def main():
                 #screen2json("/home/tiago/Documents/mash_wrapper_tests/testing_2_sorted.tab")
 
     elif args.sequences:
-        fastas = []
         ## used for sequences
         for sequence in args.sequences:
             if any(x in sequence for x in
@@ -449,8 +444,7 @@ def main():
     elif args.assemblies:
         list_mash_files = []
         for assembly in args.assemblies:
-            mash_files = masher_direct(assembly, args.assemblies,
-                                             args.output_tag, threads)
+            mash_files = masher_direct(assembly, args.output_tag, threads)
             list_mash_files += mash_files
     else:
         print("Error: Please provide a reads file (-r option) or a sequences "
