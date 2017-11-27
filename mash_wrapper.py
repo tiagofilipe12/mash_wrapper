@@ -428,6 +428,7 @@ def main():
                 #screen2json("/home/tiago/Documents/mash_wrapper_tests/testing_2_sorted.tab")
 
     elif args.sequences:
+        fastas = []
         ## used for sequences
         for sequence in args.sequences:
             if any(x in sequence for x in
