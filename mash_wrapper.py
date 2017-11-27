@@ -316,12 +316,12 @@ def main():
                                help='Provide the input sequence files to parse. '
                                     'Usually fasta files. This option is '
                                     'mutually exclusive with "-r".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
-    # mutual_parser.add_argument('-a', '--assemblies', dest='assemblies',
-    #                            nargs='+',
-    #                            help='Provide the input assemblies files to '
-    #                                 'parse. '
-    #                                 'Usually fasta files. This option is '
-    #                                 'mutually exclusive with "-r".')
+    mutual_parser.add_argument('-a', '--assemblies', dest='assemblies',
+                               nargs='+',
+                               help='Provide the input assemblies files to '
+                                    'parse. '
+                                    'Usually fasta files. This option is '
+                                    'mutually exclusive with "-r".')
 
     parser.add_argument('-o', '--output', dest='output_tag', required=True,
                         help='Provide an output tag')
@@ -446,12 +446,12 @@ def main():
 
             list_mash_files.append(mash_output)
         mashdist2graph(list_mash_files, args.output_tag)
-    # elif args.assemblies:
-    #     list_mash_files = []
-    #     for assembly in args.assemblies:
-    #         mash_files = masher_direct(assembly, args.assemblies,
-    #                                          args.output_tag, threads)
-    #         list_mash_files += mash_files
+    elif args.assemblies:
+        list_mash_files = []
+        for assembly in args.assemblies:
+            mash_files = masher_direct(assembly, args.assemblies,
+                                             args.output_tag, threads)
+            list_mash_files += mash_files
     else:
         print("Error: Please provide a reads file (-r option) or a sequences "
               "file (-f option)")
