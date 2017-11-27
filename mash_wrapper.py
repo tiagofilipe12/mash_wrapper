@@ -148,31 +148,31 @@ def masher(ref_sketch, read_sketch, output_tag, threads):
     print(stderr)
     return out_file_path
 
-# def masher_direct(assembly, assemblies, output_tag, threads):
-#     out_folder = os.path.join(os.path.dirname(os.path.abspath(assembly)),
-#                               output_tag)
-#     folderexist(out_folder)
-#     out_file_list = []
-#     for infile in assemblies:
-#         out_file = "{}_{}_{}".format(os.path.basename(infile).split(".")[0],
-#                                      os.path.basename(assembly).split(".")[0],
-#                                      "_distances.txt")
-#         out_file_path = os.path.join(out_folder, out_file)
-#         if infile != assembly:
-#             mash_command = "mash dist -p {} {} {} > {}".format(threads,
-#                                                                assembly,
-#                                                                infile,
-#                                                                out_file_path)
-#
-#             print
-#             print(mash_command)
-#             print
-#             p = Popen(mash_command, stdout=PIPE, stderr=PIPE, shell=True)
-#             p.wait()
-#             stdout, stderr = p.communicate()
-#             print(stderr)
-#             out_file_list.append(out_file_path)
-#     return out_file_list
+def masher_direct(assembly, assemblies, output_tag, threads):
+    out_folder = os.path.join(os.path.dirname(os.path.abspath(assembly)),
+                              output_tag)
+    folderexist(out_folder)
+    out_file_list = []
+    for infile in assemblies:
+        out_file = "{}_{}_{}".format(os.path.basename(infile).split(".")[0],
+                                     os.path.basename(assembly).split(".")[0],
+                                     "_distances.txt")
+        out_file_path = os.path.join(out_folder, out_file)
+        if infile != assembly:
+            mash_command = "mash dist -p {} {} {} > {}".format(threads,
+                                                               assembly,
+                                                               infile,
+                                                               out_file_path)
+
+            print
+            print(mash_command)
+            print
+            p = Popen(mash_command, stdout=PIPE, stderr=PIPE, shell=True)
+            p.wait()
+            stdout, stderr = p.communicate()
+            print(stderr)
+            out_file_list.append(out_file_path)
+    return out_file_list
 
 ## Reads the output of mash dist and performes a barplot for each reads
 def mashdist2graph(list_mash_files, tag):
@@ -288,32 +288,6 @@ def multiprocess_mash_file(pvalue, mashdist, in_folder):
     #print temporary_list
     temporary_list.append(seq)
     return temporary_list
-
-def masher_direct(assembly, assemblies, output_tag, threads):
-    out_folder = os.path.join(os.path.dirname(os.path.abspath(assembly)),
-                              output_tag)
-    folderexist(out_folder)
-    out_file_list = []
-    for infile in assemblies:
-        out_file = "{}_{}_{}".format(os.path.basename(infile).split(".")[0],
-                                     os.path.basename(assembly).split(".")[0],
-                                     "_distances.txt")
-        out_file_path = os.path.join(out_folder, out_file)
-        if infile != assembly and os.path.isfile(out_file_path) == False:
-            mash_command = "mash dist -p {} {} {} > {}".format(threads,
-                                                               assembly,
-                                                               infile,
-                                                               out_file_path)
-
-            print
-            print(mash_command)
-            print
-            p = Popen(mash_command, stdout=PIPE, stderr=PIPE, shell=True)
-            p.wait()
-            stdout, stderr = p.communicate()
-            print(stderr)
-            out_file_list.append(out_file_path)
-    return out_file_list
 
 def main():
     parser = argparse.ArgumentParser(
