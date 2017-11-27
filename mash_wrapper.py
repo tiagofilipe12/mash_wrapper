@@ -166,6 +166,7 @@ def masher_direct(ref_sketch, assembly, output_tag, threads):
     p.wait()
     stdout, stderr = p.communicate()
     print(stderr)
+    return out_file_path
 
 ## Reads the output of mash dist and performes a barplot for each reads
 def mashdist2graph(list_mash_files, tag):
@@ -441,8 +442,10 @@ def main():
     elif args.assemblies:
         list_mash_files = []
         for assembly in args.assemblies:
-            masher_direct(ref_sketch, assembly, args.output_tag, threads)
-            list_mash_files += assembly
+            mash_output = masher_direct(ref_sketch, assembly, args.output_tag, threads)
+            list_mash_files += mash_output
+            if args.json:
+                json_dumping(mash_output, pvalue, mashdist, args.output_tag)
     else:
         print("Error: Please provide a reads file (-r option) or a sequences "
               "file (-f option)")
