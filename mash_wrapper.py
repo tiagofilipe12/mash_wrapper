@@ -153,7 +153,7 @@ def masher_direct(assembly, output_tag, threads):
                               output_tag)
     folderexist(out_folder)
     out_file_list = []
-    out_file = "{}_{}_{}".format(os.path.basename(assembly).split(".")[0],
+    out_file = "{}_{}".format(os.path.basename(assembly).split(".")[0],
                                  "_distances.txt")
     out_file_path = os.path.join(out_folder, out_file)
     mash_command = "mash dist -p {} {} > {}".format(threads, assembly,
