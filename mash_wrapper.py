@@ -441,8 +441,8 @@ def main():
     elif args.assemblies:
         list_mash_files = []
         for assembly in args.assemblies:
-            mash_files = masher_direct(assembly, args.output_tag, threads)
-            list_mash_files += mash_files
+            masher_direct(assembly, args.output_tag, threads)
+            list_mash_files += assembly
     else:
         print("Error: Please provide a reads file (-r option) or a sequences "
               "file (-f option)")
