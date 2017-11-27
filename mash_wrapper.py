@@ -210,14 +210,14 @@ def mashdist2graph(list_mash_files, tag):
 
 def json_dumping(mash_output, pvalue, mashdist, output_tag):
     out_file = open(
-        os.path.join(output_tag, mash_output.split(".")[0] + ".json"),
+        os.path.join(output_tag, os.path.basename(mash_output) + ".json"),
         "w")
     input_f = open(mash_output, 'r')
     temporary_list = []
     master_dict = {}
     for line in input_f:
         tab_split = line.split("\t")
-        ref_accession = "_".join(tab_split[0].strip().split("_")[3:6])
+        ref_accession = "_".join(tab_split[0].strip().split("_")[1:2])
         seq_string = tab_split[1].split(".")[0].strip()
         mash_dist = tab_split[2].strip()
         p_value = tab_split[3].strip()
