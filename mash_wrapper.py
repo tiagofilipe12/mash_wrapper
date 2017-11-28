@@ -213,12 +213,12 @@ def json_dumping(mash_output, pvalue, mashdist, output_tag):
         os.path.join(output_tag, os.path.basename(mash_output) + ".json"),
         "w")
     input_f = open(mash_output, 'r')
-    temporary_list = []
+    #temporary_list = []
     master_dict = {}
     for line in input_f:
         tab_split = line.split("\t")
         ref_accession = "_".join(tab_split[0].strip().split("_")[0:3])
-        seq_string = tab_split[1].split(".")[0].strip()
+        #seq_string = tab_split[1].split(".")[0].strip()
         mash_dist = tab_split[2].strip()
         p_value = tab_split[3].strip()
         ## there is no need to store all values since we are only interested in
@@ -226,7 +226,7 @@ def json_dumping(mash_output, pvalue, mashdist, output_tag):
         ## and those that correlate well with ANI (mashdist<=0.1)
         if float(p_value) < float(pvalue) and float(mash_dist) < float(mashdist):
             # temporary_list.append([ref_accession, mash_dist])
-            master_dict[ref_accession] = float(mash_dist)
+            master_dict[ref_accession] = 1 - float(mash_dist)
     # if temporary_list:
     #     master_dict[ref_accession] = temporary_list
         ## writes output json
