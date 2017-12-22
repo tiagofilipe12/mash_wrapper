@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-## Last update: 9/10/2017
+## Last update: 22/12/2017
 ## Author: T.F. Jesus
 ## This script runs MASH in plasmid databases.
 ## Note: each header in fasta is considered a reference

@@ -1,6 +1,16 @@
 # mash_wrapper.py
 
-This script runs MASH in plasmid databases, using mash dist
+## Installating
+
+* Download [release 1.0.0 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/1.0.0)
+
+* Download [mash 2.0.0](https://github.com/marbl/Mash/releases/tag/v2.0)
+
+* pip install -r requirements.txt
+
+## What is mash_wrapper.py
+
+This script runs MASH in plasmid databases, using `mash dist` and `mash screen`
 
 Note: each header in fasta is considered a reference ('-i' option of mash).
 
@@ -61,4 +71,6 @@ MASH related options:
 * A **text** file with MASH distance outputs as well as .msh files for each input read file.
 
 * A **html** file with a bar plot graphical visualization, with each input read file as a series of data.
+
+* A **json** file that can be imported in [pATLAS](www.patlas.site).
 
