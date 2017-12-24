@@ -3,10 +3,23 @@
 ## Installating
 
 * Download [release 1.0.0 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/1.0.0)
+(don't forget to download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.0/assembly_reference.msh), 
+that is used to run this script).
 
 * Download [mash 2.0.0](https://github.com/marbl/Mash/releases/tag/v2.0)
 
-* pip install -r requirements.txt
+* `pip3 install -r requirements.txt`
+
+## How to run
+
+### Assembly or fasta comparison
+
+`mash_wrapper.py -rs <assembly_reference.msh> -a <your_fasta> -j -o 
+<tyour_output_folder>`
+
+### Mash screen
+
+(TODO)
 
 ## What is mash_wrapper.py
 
