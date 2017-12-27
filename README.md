@@ -1,5 +1,17 @@
 # mash_wrapper.py
 
+## About
+
+mash_wrapper.py is a script that is intended to allow users to use mash plasmid 
+database (provided in indexes folder) . It provides options to run mash dist 
+as well as mash screen with different purposes. While `mash dist` is 
+used to calculate the similarities of any sequence with the existing plasmids
+ in database, `mash screen` is used to check if any of the existing plasmid 
+ might be present in the provided reads. So, basically, this script features 
+ two different ways to check the presence of plasmids both in sequences (Fasta) 
+ and in reads (FastQ). Then, the resulting `*.json` files can be imported in 
+ [pATLAS](www.patlas.site).
+
 ## Installating
 
 * Download [release 1.0.0 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/v1.0.0)
