@@ -10,7 +10,7 @@ used to calculate the similarities of any sequence with the existing plasmids
  might be present in the provided reads. So, basically, this script features 
  two different ways to check the presence of plasmids both in sequences (Fasta) 
  and in reads (FastQ). Then, the resulting `*.json` files can be imported in 
- [pATLAS](www.patlas.site).
+ [pATLAS](http://www.patlas.site).
 
 ## Installating
 
