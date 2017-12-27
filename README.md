@@ -2,7 +2,7 @@
 
 ## Installating
 
-* Download [release 1.0.0 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/1.0.0)
+* Download [release 1.0.0 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/v1.0.0)
 (don't forget to download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.0/assembly_reference.msh), 
 that is used to run this script).
 
