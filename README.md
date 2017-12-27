@@ -17,9 +17,10 @@ that is used to run this script).
 `mash_wrapper.py -rs <assembly_reference.msh> -a <your_fasta> -j -o 
 <tyour_output_folder>`
 
-### Mash screen
+### Mash screen for read samples
 
-(TODO)
+`mash_wrapper.py -rs assembly_reference.msh -r <read(s)> -o <output_name> 
+-t <number_of_threads> -j -ms`
 
 ## What is mash_wrapper.py
 
