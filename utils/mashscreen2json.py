@@ -10,7 +10,7 @@ import numpy as np
 import json
 from .shell_functions import shell_stdout_write
 
-def mashscreen(ref_sketch, main_path, output_tag, threads, pvalue,
+def mashscreen(ref_sketch, output_tag, threads, pvalue,
                winner, min_identity, reads):
     '''function to execute mash screen
 
@@ -21,7 +21,6 @@ def mashscreen(ref_sketch, main_path, output_tag, threads, pvalue,
     Parameters
     ----------
     ref_sketch: str
-    main_path: str
     output_tag: str
     threads: str
     pvalue: str
@@ -34,7 +33,7 @@ def mashscreen(ref_sketch, main_path, output_tag, threads, pvalue,
     out_file: String
     '''
 
-    out_file = os.path.join(main_path, output_tag + ".tab")
+    out_file = os.path.join(output_tag + ".tab")
 
     # checks if there is two or one argument in reads
     # establishes default command

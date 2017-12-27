@@ -85,7 +85,7 @@ def sketch_references(inputfile, output_tag, threads, kmer_size):
 def sketch_reads(read, mainpath, output_tag, threads, kmer_size):
     out_file = os.path.join(mainpath, output_tag + "_" +
                             os.path.basename(read).split(".")[0])
-    folderexist(out_folder)
+    folderexist(output_tag)
     sketcher_command = ["mash",
                         "sketch",
                         "-o",
@@ -413,10 +413,9 @@ def main():
                 list_mash_files.append(mash_output)
             mashdist2graph(list_mash_files, args.output_tag)
         else:
-            folderexist(mainpath) # checks main path
-            screen_out_file = mashscreen(ref_sketch, mainpath, args.output_tag,
-                                 threads, pvalue,
-                       args.winner, args.min_identity, args.reads)
+            #folderexist(mainpath) # checks main path
+            screen_out_file = mashscreen(ref_sketch, args.output_tag,
+                threads, pvalue, args.winner, args.min_identity, args.reads)
             mash_output = sort_mash_screen(screen_out_file)
             if args.json:
                 screen2json(mash_output)
