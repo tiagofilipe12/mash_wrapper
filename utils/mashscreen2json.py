@@ -148,8 +148,8 @@ def screen2json(mash_output):
         # estimated copy number
         copy_number = int(float(v[1])/median_cutoff)
         # assure that plasmid as at least twice the median coverage depth
-        if float(v[1]) > median_cutoff: filtered_dic[k] = [v[0],
-                                                           str(copy_number)]
+        if float(v[1]) > median_cutoff:
+            filtered_dic["_".join(k.split("_")[0:3])] = [v[0], str(copy_number)]
     print("Exported dictionary has {} entries".format(len(filtered_dic)))
     output_json.write(json.dumps(filtered_dic))
     output_json.close()
