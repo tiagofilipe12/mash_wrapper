@@ -20,6 +20,14 @@ from utils.mashscreen2json import mashscreen, sort_mash_screen, screen2json
 
 ## Checks if a directory exists and if not creates one.
 def folderexist(directory):
+    '''
+    Checks if a folder exists or not and if it doesn't creates a new one.
+    Parameters
+    ----------
+    directory: str
+        A string with the path to the directory
+
+    '''
     if not directory.endswith("/"):
         directory = directory + "/"
     if not os.path.exists(os.path.join(directory)):
@@ -33,6 +41,19 @@ def folderexist(directory):
 ## Function to fix several issues that fasta header names can have with some
 # programs
 def header_fix(input_header):
+    '''
+    A function to fix Fasta headers for unwanted characters
+    Parameters
+    ----------
+    input_header: str
+        the actual string of the header to be fixed
+
+    Returns
+    -------
+    input_header: str
+        returns the fixed string with problematic characters replaced by "_"
+
+    '''
     problematic_characters = ["|", " ", ",", ".", "(", ")", "'", "/", "[", "]",
                               ":", "{", "}"]
     for char in problematic_characters:
@@ -43,6 +64,22 @@ def header_fix(input_header):
 ## Function to create a master fasta file from several fasta databases. One
 # fasta is enought though
 def master_fasta(fastas, output_tag):
+    '''
+    A function to concatenate all fastas to a main_fasta
+    Parameters
+    ----------
+    fastas: list
+        A list of all fasta files given as inputs to argparser
+    output_tag: str
+        The tag of the output file, used in many instances to attribute
+        common names to files from the same run
+
+    Returns
+    -------
+    : str
+        A string with the full name of the file with all concatenated fastas
+
+    '''
     master_fasta = open("master_fasta_" + output_tag + ".fas", "w")
     for filename in fastas:
         fasta = open(filename, "r")
@@ -57,6 +94,29 @@ def master_fasta(fastas, output_tag):
 
 ## Makes the sketch command of mash for the reference
 def sketch_references(inputfile, output_tag, threads, kmer_size):
+    '''
+    Function to make mash sketch for the references. This function is only
+    executed when a new reference index is necessary. Usually users will
+    provide a .msh file that already contains this index and this function
+    will be skipped.
+    Parameters
+    ----------
+    inputfile: str
+        The name of the main fasta file
+    output_tag: str
+        The tag of the output file, used in many instances to attribute
+        common names to files from the same run
+    threads: str
+        The number of threads to be used by mash
+    kmer_size: str
+        The kmer size to be used by mash
+
+    Returns
+    -------
+    : str
+        A string with the path to the index file .msh
+
+    '''
     out_folder = os.path.join(os.path.dirname(os.path.abspath(inputfile)),
                               output_tag)
     out_file = os.path.join(out_folder, output_tag + "_reference")
@@ -83,6 +143,32 @@ def sketch_references(inputfile, output_tag, threads, kmer_size):
 ## According to mash turorial it is useful to provide the -m 2 option in order
 # to remove single-copy k-mers
 def sketch_reads(read, mainpath, output_tag, threads, kmer_size):
+    '''
+    A function to make sketches of the reads provided before executing mash
+    screen. Mash dist is not recommended to find existing plasmids contained in
+    read files.
+    This function will be run as many times as the input reads.
+    Parameters
+    ----------
+    read: str
+        the name of the read files
+    mainpath: str
+        The name of the main fasta file
+    output_tag: str
+        The tag of the output file, used in many instances to attribute
+        common names to files from the same run
+    threads: str
+        The number of threads to be used by mash
+    kmer_size: str
+        The kmer size to be used by mash
+
+    Returns
+    -------
+    : str
+        The path to the .msh sketch file. Note that this function will be
+        ran many times and many .msh files will be generated.
+
+    '''
     out_file = os.path.join(mainpath, output_tag + "_" +
                             os.path.basename(read).split(".")[0])
     folderexist(output_tag)
@@ -112,6 +198,20 @@ def sketch_reads(read, mainpath, output_tag, threads, kmer_size):
 ## According to mash turorial it is useful to provide the -m 2 option in order
 # to remove single-copy k-mers
 def sketch_sequences(sequence, mainpath, output_tag, threads, kmer_size):
+    '''
+    Requires testing...
+    Parameters
+    ----------
+    sequence
+    mainpath
+    output_tag
+    threads
+    kmer_size
+
+    Returns
+    -------
+
+    '''
     out_file = os.path.join(mainpath, output_tag + "_" +
                             os.path.basename(sequence).split(".")[0])
     folderexist(mainpath)
@@ -134,7 +234,25 @@ def sketch_sequences(sequence, mainpath, output_tag, threads, kmer_size):
 
 
 ## Executes mash dist
-def masher(ref_sketch, read_sketch, output_tag, threads):
+def masher(ref_sketch, read_sketch, threads):
+    '''
+    Function that executes mash dist both for fastas and for reads. However,
+    this is not really recommended for reads
+    Parameters
+    ----------
+    ref_sketch: str
+        The name of the reference sketch to be user in mash dist
+    read_sketch: str
+        The sketch of a read or sequence (Fasta) file name
+    threads: str
+        The number of threads to be used by mash dist
+
+    Returns
+    -------
+    out_file_path: str
+        The path to the output file
+
+    '''
     out_folder = os.path.join(os.path.dirname(os.path.abspath(ref_sketch)))
     out_file = os.path.basename(read_sketch).split(".")[0] + "_distances.txt"
     out_file_path = os.path.join(out_folder, out_file)
@@ -149,6 +267,25 @@ def masher(ref_sketch, read_sketch, output_tag, threads):
     return out_file_path
 
 def masher_direct(ref_sketch, assembly, output_tag, threads):
+    '''
+    This function takes an assembly without sketching it a priori. Given that
+    this is extremely fast, there is no need to sketch before running mash dist
+    Parameters
+    ----------
+    ref_sketch: str
+        file name for the reference sketch
+    assembly: str
+        file name for the fasta to be read
+    output_tag: str
+        The tag of the output file, used in many instances to attribute
+        common names to files from the same run
+    threads: str
+        The number of threads to be used by mash dist
+
+    Returns
+    -------
+
+    '''
     out_folder = os.path.join(os.path.dirname(os.path.abspath(assembly)),
                               output_tag)
     folderexist(out_folder)
@@ -290,61 +427,61 @@ def main():
     mutual_parser = parser.add_mutually_exclusive_group()
     mutual_parser_2 = parser.add_mutually_exclusive_group()
 
-    mutual_parser_2.add_argument('-i', '--input_references', dest='inputfile',
-                                 nargs='+',
-                                 help='Provide the input fasta files to '
-                                      'parse. Not required for multiple '
-                                      'comparisons between assemblies.')
-    mutual_parser_2.add_argument('-rs', '--reference_sketch',
-                                 dest='ref_sketch',
-                                 help='If you have a reference sketch for '
-                                      'references '
-                                      'provide it with this option.')
+    mutual_parser_2.add_argument("-i", "--input_references", dest="inputfile",
+                                 nargs="+",
+                                 help="Provide the input fasta files to "
+                                      "parse. Not required for multiple "
+                                      "comparisons between assemblies.")
+    mutual_parser_2.add_argument("-rs", "--reference_sketch",
+                                 dest="ref_sketch",
+                                 help="If you have a reference sketch for "
+                                      "references "
+                                      "provide it with this option.")
 
-    mutual_parser.add_argument('-r', '--reads', dest='reads', nargs="+",
+    mutual_parser.add_argument("-r", "--reads", dest="reads", nargs=2,
                                action=required_length(1,2),
-                               help='Provide the input read files to parse. '
-                                    'Usually fastq 1 or 2 files. This option '
-                                    'is mutually with "-f".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
-    mutual_parser.add_argument('-f', '--sequences', dest='sequences',
-                               nargs='+',
-                               help='Provide the input sequence files to parse. '
-                                    'Usually fasta files. This option is '
-                                    'mutually exclusive with "-r".')  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
-    mutual_parser.add_argument('-a', '--assemblies', dest='assemblies',
-                               nargs='+',
-                               help='Provide the input assemblies files to '
-                                    'parse. '
-                                    'Usually fasta files. This option is '
-                                    'mutually exclusive with "-r".')
+                               help="Provide the input read files to parse. "
+                                    "Usually fastq 1 or 2 files. This option "
+                                    "is mutually with '-f'.")  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
+    mutual_parser.add_argument("-f", "--sequences", dest="sequences",
+                               nargs="+",
+                               help="Provide the input sequence files to parse. "
+                                    "Usually fasta files. This option is "
+                                    "mutually exclusive with '-r'.")  ## should implement a parser for a given directory with reads or a list file with all full path to each read library
+    mutual_parser.add_argument("-a", "--assemblies", dest="assemblies",
+                               nargs="+",
+                               help="Provide the input assemblies files to "
+                                    "parse. "
+                                    "Usually fasta files. This option is "
+                                    "mutually exclusive with '-r'.")
 
-    parser.add_argument('-o', '--output', dest='output_tag', required=True,
-                        help='Provide an output tag')
-    parser.add_argument('-t', '--threads', dest='threads',
-                        help='Provide the number of threads to be used. '
-                             'Default: 1')
-    parser.add_argument('-no_rm', '--no-remove', dest='no_remove',
-                        action='store_true',
-                        help='Specify if you do not want to remove the output'
-                             ' concatenated fasta.')
-    parser.add_argument('-j', '--json', dest='json', action='store_true',
-                        help='If you desire to export a json file with all '
-                             'significant entries use this options.')
-    parser.add_argument('-m', '--mashix', dest='mashix', action='store_true',
-                        help='Perform a matrix of all mash distance, taking '
-                             'all files.')
+    parser.add_argument("-o", "--output", dest="output_tag", required=True,
+                        help="Provide an output tag")
+    parser.add_argument("-t", "--threads", dest="threads",
+                        help="Provide the number of threads to be used. "
+                             "Default: 1")
+    parser.add_argument("-no_rm", "--no-remove", dest="no_remove",
+                        action="store_true",
+                        help="Specify if you do not want to remove the output"
+                             " concatenated fasta.")
+    parser.add_argument("-j", "--json", dest="json", action="store_true",
+                        help="If you desire to export a json file with all "
+                             "significant entries use this options.")
+    parser.add_argument("-m", "--mashix", dest="mashix", action="store_true",
+                        help="Perform a matrix of all mash distance, taking "
+                             "all files.")
 
-    mash_options = parser.add_argument_group('MASH related options')
-    mash_options.add_argument('-k', '--kmers', dest='kmer_size',
-                              help='Provide the number of k-mers to be provided'
-                                   ' to mash sketch. Default: 21')
-    mash_options.add_argument('-p', '--pvalue', dest='pvalue', default="0.05",
-                              help='Provide the p-value to consider a distance'
-                                   ' significant. Default: 0.05.')
-    mash_options.add_argument('-md', '--mashdist', dest='mashdistance',
+    mash_options = parser.add_argument_group("MASH related options")
+    mash_options.add_argument("-k", "--kmers", dest="kmer_size",
+                              help="Provide the number of k-mers to be provided"
+                                   " to mash sketch. Default: 21")
+    mash_options.add_argument("-p", "--pvalue", dest="pvalue", default="0.05",
+                              help="Provide the p-value to consider a distance"
+                                   " significant. Default: 0.05.")
+    mash_options.add_argument("-md", "--mashdist", dest="mashdistance",
                               default="0.1",
-                              help='Provide the maximum mash distance to be'
-                                   ' parsed to the matrix. Default: 0.1.')
+                              help="Provide the maximum mash distance to be"
+                                   " parsed to the matrix. Default: 0.1.")
     ## mash screen related options
     mash_options.add_argument("-ms", "--mashscreen", dest="mashscreen",
                               action="store_true",
@@ -404,8 +541,7 @@ def main():
             for read in args.reads:
                 read_sketch = sketch_reads(read, mainpath, args.output_tag,
                                            threads, kmer_size)
-                mash_output = masher(ref_sketch, read_sketch, args.output_tag,
-                                     threads)
+                mash_output = masher(ref_sketch, read_sketch, threads)
                 ## parses distances.txt to json file
                 if args.json:
                     json_dumping(mash_output, pvalue, mashdist, args.output_tag)
@@ -419,8 +555,7 @@ def main():
             mash_output = sort_mash_screen(screen_out_file)
             if args.json:
                 screen2json(mash_output)
-                #screen2json("/home/tiago/Documents/mash_wrapper_tests/testing_2_sorted.tab")
-
+    ## TODO test if this code is still used
     elif args.sequences:
         ## used for sequences
         for sequence in args.sequences:
@@ -431,14 +566,15 @@ def main():
             sequence_sketch = sketch_sequences(sequence, mainpath,
                                                args.output_tag, threads,
                                                kmer_size)
-            mash_output = masher(ref_sketch, sequence_sketch, args.output_tag,
-                                 threads)
+            mash_output = masher(ref_sketch, sequence_sketch, threads)
             ## parses distances.txt to json file
             if args.json:
                 json_dumping(mash_output, pvalue, mashdist, args.output_tag)
 
             list_mash_files.append(mash_output)
         mashdist2graph(list_mash_files, args.output_tag)
+    ## this is the statement executed to run fastas or plasmid assemblies in
+    # mash dist
     elif args.assemblies:
         list_mash_files = []
         for assembly in args.assemblies:

@@ -12,7 +12,7 @@ used to calculate the similarities of any sequence with the existing plasmids
  and in reads (FastQ). Then, the resulting `*.json` files can be imported in 
  [pATLAS](http://www.patlas.site).
 
-## Installating
+## Installation
 
 * Download [release 1.0.0 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/v1.0.0)
 (don't forget to download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.0/assembly_reference.msh), 
