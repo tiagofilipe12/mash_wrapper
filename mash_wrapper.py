@@ -312,7 +312,7 @@ def mashdist2graph(list_mash_files, tag):
     ## First reads mash output files and creates a sorted dictionary for each
     # file by mash distance (from highest to lowest values)
     for in_file in list_mash_files:
-        dist_file = open(in_file, 'r')
+        dist_file = open(in_file, "r")
         for line in dist_file:
             tab_split = line.split("\t")
             reference_id = tab_split[0]
@@ -339,10 +339,10 @@ def mashdist2graph(list_mash_files, tag):
         trace_list.append(trace)
 
     ## Creates the plot itself
-    layout = go.Layout(barmode='group', yaxis=dict(
-        title='Mash distances (mutation rate between pairwise comparisons)'))
+    layout = go.Layout(barmode="group", yaxis=dict(
+        title="Mash distances (mutation rate between pairwise comparisons)"))
     fig = go.Figure(data=trace_list, layout=layout)
-    plotly.offline.plot(fig, filename=tag + '.html',
+    plotly.offline.plot(fig, filename=tag + ".html",
                                    auto_open=False)
 
 def json_dumping(mash_output, pvalue, mashdist, output_tag):
