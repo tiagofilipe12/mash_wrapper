@@ -1,12 +1,6 @@
-# mash sketch -p 7 test_run.fasta -o mash_screen_test
-
-# gunzip *fastq.gz ... if gz is found
-
-# mash screen ../../../plasmid_db_07202017/fasta/mash_screen_test.msh 5474_EP42_15_1_trimmed.fastq 5474_EP42_15_2_trimmed.fastq -p 7 > screen.tab
-
 import os
 #from subprocess import Popen, PIPE
-import numpy as np
+from statistics import median
 import json
 from .shell_functions import shell_stdout_write
 
@@ -139,7 +133,7 @@ def screen2json(mash_output):
     # has 9k entries and reads shouldn't have that many sequences it seems ok...
     # TODO but needs further testing
     # TODO maybe the cutoff can be ignored for filtering
-    median_cutoff = np.median(median_list)*2
+    median_cutoff = median(median_list)*2
 
     output_json = open(" ".join(mash_output.split(".")[:-1]) + ".json", "w")
 

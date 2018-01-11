@@ -14,25 +14,47 @@ used to calculate the similarities of any sequence with the existing plasmids
 
 ## Installation
 
-* Download [release 1.0.0 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/v1.0.0)
-(don't forget to download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.0/assembly_reference.msh), 
-that is used to run this script).
-
 * Download [mash 2.0.0](https://github.com/marbl/Mash/releases/tag/v2.0)
 
+### Using pipy
+
+* Download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.3/assembly_reference.msh), 
+that is used to run this script.
+
+* `pip3 install mash-wrapper`
+
+### Using git release
+
+* Download [release 1.0.3 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/v1.0.3)
+(don't forget to download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.3/assembly_reference.msh), 
+that is used to run this script).
+
 * `pip3 install -r requirements.txt`
+
+**Note:** Please check this [Troubleshooting](#troubleshooting), since there 
+seems to exist an issue with mash screen and msh files generated in other 
+machines.
 
 ## How to run
 
 ### Assembly or fasta comparison
 
-`mash_wrapper.py -rs <assembly_reference.msh> -a <your_fasta> -j -o 
-<tyour_output_folder>`
+`mash_wrapper.py -rs <assembly_reference.msh> -a <your_fasta> -t <number_of_threads> -j -o 
+<your_output_folder>`
 
 ### Mash screen for read samples
 
-`mash_wrapper.py -rs assembly_reference.msh -r <read(s)> -o <output_name> 
--t <number_of_threads> -j -ms`
+`mash_wrapper.py -rs assembly_reference.msh -r <read(s)> -o <output_name> -t <number_of_threads> -j -ms`
+
+#### Troubleshooting
+
+If for some reason the above command for Mash screen mode doesn't work. 
+
+Download [reference fasta file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.3/reference.fasta).
+
+And run the following command:
+
+`mash_wrapper.py -rf reference.fasta -r <read(s)> -o <output_name> -t <number_of_threads> -j -ms`
 
 ## What is mash_wrapper.py
 
@@ -51,6 +73,9 @@ optional arguments:
   -rs REF_SKETCH, --reference_sketch REF_SKETCH
                         If you have a reference sketch for references provide
                         it with this option.
+  -rf REF_FASTA, --reference_fasta REF_FASTA
+                        If you have a reference fasta provide it with this
+                        option.
   -r READS [READS ...], --reads READS [READS ...]
                         Provide the input read files to parse. Usually fastq 1
                         or 2 files. This option is mutually with "-f".

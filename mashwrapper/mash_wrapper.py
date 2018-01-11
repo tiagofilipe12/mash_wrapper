@@ -444,6 +444,11 @@ def main():
                                       "references "
                                       "provide it with this option.")
 
+    mutual_parser_2.add_argument("-rf", "--reference_fasta",
+                                 dest="ref_fasta",
+                                 help="If you have a reference fasta "
+                                      "provide it with this option.")
+
     mutual_parser.add_argument("-r", "--reads", dest="reads", nargs="+",
                                action=required_length(1,2),
                                help="Provide the input read files to parse. "
@@ -532,6 +537,14 @@ def main():
                                 args.output_tag)
     elif args.ref_sketch:
         ref_sketch = args.ref_sketch
+        mainpath = os.path.dirname(os.path.abspath(ref_sketch))
+
+    elif args.ref_fasta:
+        # TODO this is a wrapper to fix a problem with using msh file in
+        # different machines, now it has to generate a sketch each time mach
+        # runs for the input fastas
+        ref_sketch = sketch_references(args.ref_fasta, args.output_tag,
+                                       threads, kmer_size)
         mainpath = os.path.dirname(os.path.abspath(ref_sketch))
 
     else:
