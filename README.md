@@ -123,5 +123,5 @@ MASH related options:
 
 * A **html** file with a bar plot graphical visualization, with each input read file as a series of data.
 
-* A **json** file that can be imported in [pATLAS](www.patlas.site).
+* A **json** file that can be imported in [pATLAS](http://www.patlas.site).
 
