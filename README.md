@@ -18,15 +18,15 @@ used to calculate the similarities of any sequence with the existing plasmids
 
 ### Using pipy
 
-* Download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.3/assembly_reference.msh), 
+* Download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.4/patlas.msh), 
 that is used to run this script.
 
 * `pip3 install mash-wrapper`
 
 ### Using git release
 
-* Download [release 1.0.3 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/v1.0.3)
-(don't forget to download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.3/assembly_reference.msh), 
+* Download [release 1.0.4 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/v1.0.4)
+(don't forget to download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.4/patlas.msh), 
 that is used to run this script).
 
 * `pip3 install -r requirements.txt`
@@ -39,18 +39,19 @@ machines.
 
 ### Assembly or fasta comparison
 
-`mash_wrapper.py -rs <assembly_reference.msh> -a <your_fasta> -t <number_of_threads> -j -o 
+`mash_wrapper.py -rs <patlas.msh> -a <your_fasta> -t <number_of_threads> -j -o 
 <your_output_folder>`
 
 ### Mash screen for read samples
 
-`mash_wrapper.py -rs assembly_reference.msh -r <read(s)> -o <output_name> -t <number_of_threads> -j -ms`
+`mash_wrapper.py -rs patlas.msh -r <read(s)> -o <output_name> -t 
+<number_of_threads> -j -ms`
 
 #### Troubleshooting
 
 If for some reason the above command for Mash screen mode doesn't work. 
 
-Download [reference fasta file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.3/reference.fasta).
+Download [reference fasta file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.4/reference.fasta).
 
 And run the following command:
 
