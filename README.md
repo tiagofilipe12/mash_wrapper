@@ -18,15 +18,15 @@ used to calculate the similarities of any sequence with the existing plasmids
 
 ### Using pipy
 
-* Download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.4/patlas.msh), 
+* Download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.5/patlas.msh), 
 that is used to run this script.
 
 * `pip3 install mash-wrapper`
 
 ### Using git release
 
-* Download [release 1.0.4 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/v1.0.4)
-(don't forget to download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.4/patlas.msh), 
+* Download [release 1.0.4 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/v1.0.5)
+(don't forget to download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.5/patlas.msh), 
 that is used to run this script).
 
 * `pip3 install -r requirements.txt`
