@@ -6,7 +6,7 @@ VERSION = mashwrapper.__version__
 
 setup(
     name="mash_wrapper",
-    version="1.0.3",
+    version="1.0.5",
     packages=["mashwrapper", "mashwrapper.utils"],
     install_requires=[
         "plotly>=2.1.0",
