@@ -61,7 +61,7 @@ def mashscreen(ref_sketch, output_tag, threads, pvalue,
 
     # checks if winner takes it all is defined
     if winner:
-        command = command.append("-w")
+        command.append("-w")
 
     # Runs mash screen
     print("\nRunning mash screen for reads...\n{}\n".format(" ".join(command)))
@@ -122,18 +122,13 @@ def screen2json(mash_output):
         # estimation of the coverage depth for each plasmid.
         # Plasmids should have higher coverage depth due to their increased
         # copy number in relation to the chromosome.
-        # TODO this only is valid for relative estimate of copy number (
-        # TODO relative to all plasmids in results)
-        # TODO basically a median of the coverage of all plasmids
         dic[query_id] = [identity, median_multiplicity]
         median_list.append(float(median_multiplicity))
 
     # median cutoff is twice the median of all median_multiplicity values
     # reported by mash screen. In the case of plasmids, since the database
     # has 9k entries and reads shouldn't have that many sequences it seems ok...
-    # TODO but needs further testing
-    # TODO maybe the cutoff can be ignored for filtering
-    median_cutoff = median(median_list)*2
+    median_cutoff = median(median_list)
 
     output_json = open(" ".join(mash_output.split(".")[:-1]) + ".json", "w")
 

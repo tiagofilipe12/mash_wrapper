@@ -45,7 +45,7 @@ machines.
 ### Mash screen for read samples
 
 `mash_wrapper.py -rs patlas.msh -r <read(s)> -o <output_name> -t 
-<number_of_threads> -j -ms`
+<number_of_threads> -j -ms -w`
 
 #### Troubleshooting
 
