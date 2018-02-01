@@ -28,6 +28,7 @@ except ImportError:
 def folderexist(directory):
     '''
     Checks if a folder exists or not and if it doesn't creates a new one.
+
     Parameters
     ----------
     directory: str
@@ -49,6 +50,7 @@ def folderexist(directory):
 def header_fix(input_header):
     '''
     A function to fix Fasta headers for unwanted characters
+
     Parameters
     ----------
     input_header: str
@@ -72,10 +74,12 @@ def header_fix(input_header):
 def master_fasta(fastas, output_tag):
     '''
     A function to concatenate all fastas to a main_fasta
+
     Parameters
     ----------
     fastas: list
         A list of all fasta files given as inputs to argparser
+
     output_tag: str
         The tag of the output file, used in many instances to attribute
         common names to files from the same run
@@ -105,15 +109,19 @@ def sketch_references(inputfile, output_tag, threads, kmer_size):
     executed when a new reference index is necessary. Usually users will
     provide a .msh file that already contains this index and this function
     will be skipped.
+
     Parameters
     ----------
     inputfile: str
         The name of the main fasta file
+
     output_tag: str
         The tag of the output file, used in many instances to attribute
         common names to files from the same run
+
     threads: str
         The number of threads to be used by mash
+
     kmer_size: str
         The kmer size to be used by mash
 
@@ -154,17 +162,22 @@ def sketch_reads(read, mainpath, output_tag, threads, kmer_size):
     screen. Mash dist is not recommended to find existing plasmids contained in
     read files.
     This function will be run as many times as the input reads.
+
     Parameters
     ----------
     read: str
         the name of the read files
+
     mainpath: str
         The name of the main fasta file
+
     output_tag: str
         The tag of the output file, used in many instances to attribute
         common names to files from the same run
+
     threads: str
         The number of threads to be used by mash
+
     kmer_size: str
         The kmer size to be used by mash
 
@@ -206,12 +219,17 @@ def sketch_reads(read, mainpath, output_tag, threads, kmer_size):
 def sketch_sequences(sequence, mainpath, output_tag, threads, kmer_size):
     '''
     Requires testing...
+
     Parameters
     ----------
     sequence
+
     mainpath
+
     output_tag
+
     threads
+
     kmer_size
 
     Returns
@@ -244,12 +262,15 @@ def masher(ref_sketch, read_sketch, threads):
     '''
     Function that executes mash dist both for fastas and for reads. However,
     this is not really recommended for reads
+
     Parameters
     ----------
     ref_sketch: str
         The name of the reference sketch to be user in mash dist
+
     read_sketch: str
         The sketch of a read or sequence (Fasta) file name
+
     threads: str
         The number of threads to be used by mash dist
 
@@ -276,15 +297,19 @@ def masher_direct(ref_sketch, assembly, output_tag, threads):
     '''
     This function takes an assembly without sketching it a priori. Given that
     this is extremely fast, there is no need to sketch before running mash dist
+
     Parameters
     ----------
     ref_sketch: str
         file name for the reference sketch
+
     assembly: str
         file name for the fasta to be read
+
     output_tag: str
         The tag of the output file, used in many instances to attribute
         common names to files from the same run
+
     threads: str
         The number of threads to be used by mash dist
 
