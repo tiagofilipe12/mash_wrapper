@@ -2,15 +2,12 @@
 
 ## About
 
-mash_wrapper.py is a script that is intended to allow users to use mash plasmid 
-database (provided in indexes folder) . It provides options to run mash dist 
+mash_wrapper.py is a script that is intended to allow users to use mash. It provides options to run mash dist 
 as well as mash screen with different purposes. While `mash dist` is 
-used to calculate the similarities of any sequence with the existing plasmids
- in database, `mash screen` is used to check if any of the existing plasmid 
+used to calculate the similarities of any sequence with all the sequences in the (msh) database, `mash screen` is used to check if any of those sequences in database (in the msh file) 
  might be present in the provided reads. So, basically, this script features 
- two different ways to check the presence of plasmids both in sequences (Fasta) 
- and in reads (FastQ). Then, the resulting `*.json` files can be imported in 
- [pATLAS](http://www.patlas.site).
+ two different ways to check the presence of query sequences both in sequences (Fasta) 
+ and in reads (FastQ).
 
 ## Installation
 
@@ -18,16 +15,11 @@ used to calculate the similarities of any sequence with the existing plasmids
 
 ### Using pipy
 
-* Download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.5/patlas.msh), 
-that is used to run this script.
-
 * `pip3 install mash-wrapper`
 
 ### Using git release
 
 * Download [release 1.0.4 - popcorns & unicorns](https://github.com/tiagofilipe12/mash_wrapper/releases/tag/v1.0.5)
-(don't forget to download [index file](https://github.com/tiagofilipe12/mash_wrapper/releases/download/v1.0.5/patlas.msh), 
-that is used to run this script).
 
 * `pip3 install -r requirements.txt`
 
@@ -39,12 +31,12 @@ machines.
 
 ### Assembly or fasta comparison
 
-`mash_wrapper.py -rs <patlas.msh> -a <your_fasta> -t <number_of_threads> -j -o 
+`mash_wrapper.py -rs <yourdatabase.msh> -a <your_fasta> -t <number_of_threads> -j -o 
 <your_output_folder>`
 
 ### Mash screen for read samples
 
-`mash_wrapper.py -rs patlas.msh -r <read(s)> -o <output_name> -t 
+`mash_wrapper.py -rs <yourdatabase.msh> -r <read(s)> -o <output_name> -t 
 <number_of_threads> -j -ms -w`
 
 #### Troubleshooting
@@ -56,12 +48,6 @@ Download [reference fasta file](https://github.com/tiagofilipe12/mash_wrapper/re
 And run the following command:
 
 `mash_wrapper.py -rf reference.fasta -r <read(s)> -o <output_name> -t <number_of_threads> -j -ms`
-
-## What is mash_wrapper.py
-
-This script runs MASH in plasmid databases, using `mash dist` and `mash screen`
-
-Note: each header in fasta is considered a reference ('-i' option of mash).
 
 ### Options:
 
@@ -124,5 +110,5 @@ MASH related options:
 
 * A **html** file with a bar plot graphical visualization, with each input read file as a series of data.
 
-* A **json** file that can be imported in [pATLAS](http://www.patlas.site).
+* A **json** file with keys as accession numbers and values as the results from mash.
 
